@@ -7,4 +7,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ruby-outbox-core\ruby-outbox-core.csproj" />
+    <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
+  </ItemGroup>
+
 </Project>

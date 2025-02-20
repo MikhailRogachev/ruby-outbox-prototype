@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
+    <ProjectReference Include="..\ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

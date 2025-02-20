@@ -3,15 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-core", "ruby-outbox-core\ruby-outbox-core.csproj", "{846D1495-236F-42D4-9573-B860262A7C27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ruby-outbox-core", "ruby-outbox-core\ruby-outbox-core.csproj", "{846D1495-236F-42D4-9573-B860262A7C27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-data", "ruby-outbox-data\ruby-outbox-data.csproj", "{CBBB487E-3261-497A-8CD7-AE20B504EBD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ruby-outbox-data", "ruby-outbox-data\ruby-outbox-data.csproj", "{CBBB487E-3261-497A-8CD7-AE20B504EBD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-queue", "ruby-outbox-queue\ruby-outbox-queue.csproj", "{222234B3-9066-4A2D-B561-EDBD2E656D08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ruby-outbox-queue", "ruby-outbox-queue\ruby-outbox-queue.csproj", "{222234B3-9066-4A2D-B561-EDBD2E656D08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-infrastructure", "ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj", "{1AAA9CAA-C66E-4C1A-84AA-F660E9A6D3F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ruby-outbox-infrastructure", "ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj", "{1AAA9CAA-C66E-4C1A-84AA-F660E9A6D3F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-api", "ruby-outbox-api\ruby-outbox-api.csproj", "{334F0D47-6EB2-4067-B813-E71C889B0CCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ruby-outbox-api", "ruby-outbox-api\ruby-outbox-api.csproj", "{334F0D47-6EB2-4067-B813-E71C889B0CCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-test-core", "ruby-test-core\ruby-test-core.csproj", "{D66FAF54-BA7C-4C73-8ACC-CDAD5EF1F5CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-test-unit", "ruby-test-unit\ruby-test-unit.csproj", "{6F0A39DF-DC8C-42DC-BDAF-5C34E3D6D1BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-test-integration", "ruby-test-integration\ruby-test-integration.csproj", "{A1541DF6-EEC8-4929-B7A9-2C1452FCFFA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +45,18 @@ Global
 		{334F0D47-6EB2-4067-B813-E71C889B0CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{334F0D47-6EB2-4067-B813-E71C889B0CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{334F0D47-6EB2-4067-B813-E71C889B0CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D66FAF54-BA7C-4C73-8ACC-CDAD5EF1F5CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D66FAF54-BA7C-4C73-8ACC-CDAD5EF1F5CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D66FAF54-BA7C-4C73-8ACC-CDAD5EF1F5CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D66FAF54-BA7C-4C73-8ACC-CDAD5EF1F5CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F0A39DF-DC8C-42DC-BDAF-5C34E3D6D1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0A39DF-DC8C-42DC-BDAF-5C34E3D6D1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0A39DF-DC8C-42DC-BDAF-5C34E3D6D1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0A39DF-DC8C-42DC-BDAF-5C34E3D6D1BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1541DF6-EEC8-4929-B7A9-2C1452FCFFA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1541DF6-EEC8-4929-B7A9-2C1452FCFFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1541DF6-EEC8-4929-B7A9-2C1452FCFFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1541DF6-EEC8-4929-B7A9-2C1452FCFFA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
