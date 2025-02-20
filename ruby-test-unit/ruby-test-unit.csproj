@@ -23,6 +23,7 @@
     <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
     <ProjectReference Include="..\ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj" />
     <ProjectReference Include="..\ruby-outbox-queue\ruby-outbox-queue.csproj" />
+    <ProjectReference Include="..\ruby-test-core\ruby-test-core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

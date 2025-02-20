@@ -1,4 +1,4 @@
-﻿namespace ruby_outbox_infrastructure.Dto;
+﻿namespace ruby_outbox_core.Dto;
 
 public class CustomerDto
 {
