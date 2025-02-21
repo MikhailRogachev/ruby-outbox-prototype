@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using ruby_outbox_api.Extensions;
+using ruby_outbox_core.Contracts.Interfaces.Repositories;
+using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_data.Configuration;
 using ruby_outbox_data.Persistency;
+using ruby_outbox_data.Repositories;
+using ruby_outbox_infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +18,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(db =>
     db.UseNpgsql(connectionString);
 });
 
-
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add services to the container.
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 await app.DataBaseMigrateAsync(app.Logger);
@@ -32,7 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 

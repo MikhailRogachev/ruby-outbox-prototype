@@ -4,6 +4,7 @@ namespace ruby_outbox_core.Contracts.Interfaces.Repositories;
 
 public interface ICustomerRepository
 {
+    IUnitOfWork UnitOfWork { get; }
     Customer Add(Customer customer);
     void Remove(Customer customer);
     Customer Update(Customer customer);

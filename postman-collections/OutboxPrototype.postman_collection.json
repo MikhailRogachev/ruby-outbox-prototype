@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "9387f9b8-2ed9-413d-9e8e-e0573f9a6f41",
+		"name": "OutboxPrototype",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1379020"
+	},
+	"item": [
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "AddCustomer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5146/customers?customerId=ce22d986-ff16-466c-a1ea-b30d041ce882",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5146",
+							"path": [
+								"customers"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "ce22d986-ff16-466c-a1ea-b30d041ce882"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

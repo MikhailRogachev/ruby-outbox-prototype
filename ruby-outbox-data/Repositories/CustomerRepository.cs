@@ -1,8 +1,8 @@
-﻿using ruby_outbox_core.Contracts.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Models;
 using ruby_outbox_data.Persistency;
-using System.Data.Entity;
 
 namespace ruby_outbox_data.Repositories;
 
@@ -34,6 +34,6 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<Customer?> TryGetAsync(Guid Id)
     {
-        return await _context.Customers.FirstOrDefaultAsync(x => x.Id == Id);
+        return await _context.Customers.FirstOrDefaultAsync(p => p.Id == Id, CancellationToken.None);
     }
 }

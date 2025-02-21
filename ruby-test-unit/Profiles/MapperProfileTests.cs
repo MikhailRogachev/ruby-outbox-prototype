@@ -2,24 +2,16 @@
 using FluentAssertions;
 using ruby_outbox_core.Dto;
 using ruby_outbox_core.Models;
-using ruby_outbox_infrastructure.Profiles;
 using ruby_test_core.Attributes;
+using ruby_test_unit.Helpers;
 
 namespace ruby_test_unit.Profiles;
 
 public class MapperProfileTests
 {
-    public static IMapper Mapper()
-    {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<InfrastructureProfile>();
-        });
 
-        return new Mapper(config);
-    }
-
-    public static Customer GetCustomer() => new Customer();
+    public static IMapper Mapper() => TestHelper.Mapper();
+    public static Customer GetCustomer() => TestHelper.GetCustomer();
 
     [Theory, AutoMock]
     public void CustomerMapper_Test(
