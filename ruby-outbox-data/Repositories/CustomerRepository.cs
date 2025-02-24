@@ -6,34 +6,27 @@ using ruby_outbox_data.Persistency;
 
 namespace ruby_outbox_data.Repositories;
 
-public class CustomerRepository : ICustomerRepository
+public class CustomerRepository(ApplicationDbContext context) : ICustomerRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public IUnitOfWork UnitOfWork => _context;
-
-    public CustomerRepository(ApplicationDbContext context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-    }
+    public IUnitOfWork UnitOfWork => context;
 
     public Customer Add(Customer customer)
     {
-        return _context.Add(customer).Entity;
+        return context.Add(customer).Entity;
     }
 
     public void Remove(Customer customer)
     {
-        _context.Customers.Remove(customer);
+        context.Customers.Remove(customer);
     }
 
     public Customer Update(Customer customer)
     {
-        return _context.Update(customer).Entity;
+        return context.Update(customer).Entity;
     }
 
     public async Task<Customer?> TryGetAsync(Guid Id)
     {
-        return await _context.Customers.FirstOrDefaultAsync(p => p.Id == Id, CancellationToken.None);
+        return await context.Customers.FirstOrDefaultAsync(p => p.Id == Id, CancellationToken.None);
     }
 }

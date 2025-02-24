@@ -5,6 +5,7 @@ using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_data.Configuration;
 using ruby_outbox_data.Persistency;
 using ruby_outbox_data.Repositories;
+using ruby_outbox_infrastructure.Profiles;
 using ruby_outbox_infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +26,10 @@ builder.Services.AddSwaggerGen();
 // Add services to the container.
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IVmRepository, VmRepository>();
+builder.Services.AddScoped<IVmService, VmService>();
 
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(InfrastructureProfile));
 
 var app = builder.Build();
 await app.DataBaseMigrateAsync(app.Logger);

@@ -106,7 +106,7 @@ public class CustomerServiceTests
     }
 
     [Theory, AutoMock]
-    public async Task AddCustomer_EXception(
+    public async Task AddCustomer_Exception(
         CustomerDto dto,
         [Frozen] Mock<ICustomerRepository> repository,
         CustomerService sut

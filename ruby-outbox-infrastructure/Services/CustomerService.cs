@@ -15,7 +15,7 @@ public class CustomerService(
 {
     public async Task<CustomerDto> AddCustomerAsync(CustomerDto customerDto, CancellationToken cancellationToken)
     {
-        var customer = mapper.Map<Customer>(customerDto);
+        var customer = mapper.Map<Customer>(customerDto, opt => opt.AfterMap((src, dest) => { dest.Comment = "New Customer added."; }));
         repository.Add(customer);
 
         await repository.UnitOfWork.SaveAsync(cancellationToken);

@@ -4,12 +4,5 @@ public enum VmStatus
 {
     NotStarted,
     Creating,
-    CreatingFailed,
-    Ready,
-    Personalizing,
-    AdminPersonolized,
-    UserPersonolized,
-    PersonolizingFailed,
-    Deleting,
-    DeletingFailed
+    Ready
 }

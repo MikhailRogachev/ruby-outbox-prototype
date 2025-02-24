@@ -7,7 +7,7 @@ using ruby_test_unit.Helpers;
 
 namespace ruby_test_unit.Profiles;
 
-public class MapperProfileTests
+public class CustomerMappingTests
 {
 
     public static IMapper Mapper() => TestHelper.Mapper();
