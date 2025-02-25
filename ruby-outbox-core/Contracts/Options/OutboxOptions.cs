@@ -1,6 +1,6 @@
-﻿namespace PVAD.Vms.Infrastructure.Messaging.OutboxEvent;
+﻿namespace ruby_outbox_core.Contracts.Options;
 
-public class OutboxMessageOptions
+public class OutboxOptions
 {
     /// <summary>
     /// Get; Set; outbox message request interval (mSec)

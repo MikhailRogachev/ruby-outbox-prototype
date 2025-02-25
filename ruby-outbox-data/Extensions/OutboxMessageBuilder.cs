@@ -1,4 +1,5 @@
-﻿using ruby_outbox_core.Contracts.Interfaces;
+﻿using ruby_outbox_core.Contracts.Enums;
+using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Models;
 using System.Text.Json;
 
@@ -6,8 +7,6 @@ namespace ruby_outbox_data.Extensions;
 
 public static class OutboxMessageBuilder
 {
-
-
     public static IEnumerable<OutboxMessage> GetOutboxData(IEnumerable<IEvent> eventSource)
     {
         var outboxMessage = new List<OutboxMessage>();
@@ -19,10 +18,14 @@ public static class OutboxMessageBuilder
         {
             outboxMessage.Add(new OutboxMessage
             {
-                Id = @event.Id,
-                CreationDate = @event.CreationDate,
+                Id = @event.EventId,
+                CreationDate = @event.CreatedAt,
+                LastModifiedDate = @event.CreatedAt,
                 ContentType = @event.GetType().Name,
-                Content = JsonSerializer.SerializeToDocument(@event, @event.GetType())
+                Content = JsonSerializer.SerializeToDocument(@event, @event.GetType()),
+                Index = 0,
+                Status = OutboxMessageStatus.Ini,
+                Message = "the record is created."
             });
         }
 

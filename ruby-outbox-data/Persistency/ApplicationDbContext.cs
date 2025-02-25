@@ -8,7 +8,7 @@ using ruby_outbox_data.Extensions;
 
 namespace ruby_outbox_data.Persistency;
 /// <summary>
-/// migrations:
+/// migrations: dotnet ef migrations add update-outbox-table --project ../ruby-outbox-data --context ApplicationDbContext --output-dir ../ruby-outbox-data/Persistency/Migrations
 /// cd 
 /// dotnet ef migrations remove --project ../ruby-outbox-data --context ApplicationDbContext
 /// </summary>

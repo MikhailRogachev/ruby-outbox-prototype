@@ -22,4 +22,9 @@ public class Base
     {
         _events.Clear();
     }
+
+    public void AddEvent(IEvent @event)
+    {
+        _events.Add(@event);
+    }
 }

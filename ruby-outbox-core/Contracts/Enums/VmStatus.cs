@@ -4,5 +4,6 @@ public enum VmStatus
 {
     NotStarted,
     Creating,
+    CreateNic,
     Ready
 }

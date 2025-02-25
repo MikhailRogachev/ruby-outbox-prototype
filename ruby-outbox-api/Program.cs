@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using PVAD.Vms.Infrastructure.Messaging.OutboxEvent;
 using ruby_outbox_api.Extensions;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Interfaces.Services;
-using ruby_outbox_data.Configuration;
+using ruby_outbox_core.Contracts.Options;
+using ruby_outbox_data.Extensions;
 using ruby_outbox_data.Persistency;
 using ruby_outbox_data.Repositories;
 using ruby_outbox_infrastructure.Profiles;
@@ -12,12 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // get options
 var configuration = builder.Configuration;
-var connectionString = configuration.GetSection(nameof(DatabaseConfig)).Get<DatabaseConfig>()!.GetNpgsqlConnectionString();
+var dbConnection = configuration.GetSection(nameof(DatabaseConfig)).Get<DatabaseConfig>()!;
+builder.Services.AddOptions<OutboxOptions>().Bind(configuration.GetSection(nameof(OutboxOptions)));
 
-builder.Services.AddDbContext<ApplicationDbContext>(db =>
-{
-    db.UseNpgsql(connectionString);
-});
+// db injection
+builder.Services.AddDbContext<ApplicationDbContext>(db => db.UseNpgsql(dbConnection!.NpgsqlConnectionStringBuilder()));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -28,8 +29,11 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IVmRepository, VmRepository>();
 builder.Services.AddScoped<IVmService, VmService>();
+builder.Services.AddScoped<IOutboxMessageRepository, OutboxRepository>();
+builder.Services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
 
 builder.Services.AddAutoMapper(typeof(InfrastructureProfile));
+builder.Services.AddHostedService<OutboxEventService>();
 
 var app = builder.Build();
 await app.DataBaseMigrateAsync(app.Logger);

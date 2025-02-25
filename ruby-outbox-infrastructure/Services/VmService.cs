@@ -25,6 +25,8 @@ public class VmService(ILogger<VmService> logger, IVmRepository vmRepository, IC
 
         logger.LogInformation("Adding Vm {vid} process started.", vm.Id);
 
+        vm.StartVmCreation();
+
         vmRepository.AddVm(vm);
         await vmRepository.UnitOfWork.SaveAsync();
 

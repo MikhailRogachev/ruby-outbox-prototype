@@ -8,27 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="OutboxEventPublisher.cs" />
     <Compile Remove="OutboxEventService.cs" />
-    <Compile Remove="OutboxMessageOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="OutboxEventPublisher.txt" />
     <None Remove="OutboxMessageBuildService.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="OutboxMessageBuildService.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ruby-outbox-core\ruby-outbox-core.csproj" />
     <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="BackgroundServices\OutboxEventService.cs" />
   </ItemGroup>
 
 </Project>

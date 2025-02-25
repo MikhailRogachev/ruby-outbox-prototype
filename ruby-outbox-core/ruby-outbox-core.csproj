@@ -17,4 +17,8 @@
     <Folder Include="Documents\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Contracts\Options\OutboxOptions.cs" />
+  </ItemGroup>
+
 </Project>
