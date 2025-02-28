@@ -203,4 +203,35 @@ public class Startup
         });
     }
 }
+
+
+services.AddSingleton<ICommandBus>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<RabbitMQCommandBus>>();
+            var connection = sp.GetRequiredService<IRabbitMQConnection>();
+            var producer = sp.GetRequiredService<IRabbitMQMessageProducer>();
+            var consumer = sp.GetRequiredService<IRabbitMQEventingMessageConsumer>();
+            var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+            var correlationContextAccessor = sp.GetRequiredService<ICorrelationContextAccessor>();
+            var requestContextAccessor = sp.GetRequiredService<IRequestContextAccessor>();
+            var correlationContextFactory = sp.GetRequiredService<ICorrelationContextFactory>();
+            var requestContextFactory = sp.GetRequiredService<IRequestContextFactory>();
+
+            var commandBus = new RabbitMQCommandBus(
+                connection,
+                producer,
+                consumer,
+                logger,
+                serviceScopeFactory,
+                rabbitMQConfig.Exchange,
+                correlationContextAccessor,
+                requestContextAccessor,
+                correlationContextFactory,
+                requestContextFactory
+                );
+            ConfigureCommandBus(commandBus);
+            return commandBus;
+        });
+
+
 */
