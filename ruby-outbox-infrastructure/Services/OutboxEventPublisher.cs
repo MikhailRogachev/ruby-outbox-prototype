@@ -8,7 +8,8 @@ namespace ruby_outbox_infrastructure.Services;
 
 public class OutboxEventPublisher(
     ILogger<OutboxEventPublisher> logger,
-    IOutboxMessageRepository repository
+    IOutboxMessageRepository repository,
+    IProcessResolver resolver
     ) : IOutboxEventPublisher
 {
     //private readonly VmsDbContext _context;
@@ -81,8 +82,22 @@ public class OutboxEventPublisher(
         Type type = TryGetType(message!.ContentType);
         logger.LogInformation("The Type is {tp}", type);
 
+
+        var service = resolver.Resolve(type);
+
+
+
+
+
         var @event = JsonSerializer.Deserialize(message.Content!, type);
-        logger.LogInformation("The event found {event}", @event!.ToString());
+
+        var method = service.GetType().GetMethod("HandleAsync", new Type[] { type });
+
+        method!.Invoke(service, new object[] { @event! });
+
+
+
+        //logger.LogInformation("The event found {event}", @event!.ToString());
 
 
 
@@ -115,6 +130,9 @@ public class OutboxEventPublisher(
             _types.Add(typeName, type);
         }
 
+        //var serviceType = ProcessesContainer.Handlers[type]!;
+
+        //return serviceType;
         return type;
     }
 }

@@ -31,8 +31,14 @@ builder.Services.AddScoped<IVmRepository, VmRepository>();
 builder.Services.AddScoped<IVmService, VmService>();
 builder.Services.AddScoped<IOutboxMessageRepository, OutboxRepository>();
 builder.Services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
+builder.Services.AddScoped<IProcessResolver, ProcessResolver>();
 
 builder.Services.AddAutoMapper(typeof(InfrastructureProfile));
+
+// processes registration
+ProcessesContainer.Init(builder.Services);
+
+// hosted services registration
 builder.Services.AddHostedService<OutboxEventService>();
 
 var app = builder.Build();
