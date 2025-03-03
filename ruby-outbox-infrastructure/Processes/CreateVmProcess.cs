@@ -11,11 +11,30 @@ public class CreateVmProcess(
     IOutboxMessageRepository outboxRepository
     ) :
     IEventHandler<StartVmCreation>,
-    IEventHandler<CreateNic>
+    IEventHandler<CreateNic>,
+    IEventHandler<CreateVmResource>
 {
+
+    /// <summary>
+    /// This procedure complete the transaction
+    /// - save the Vm status updated;
+    /// - remove event record from the outbox table
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    private async Task CompleteEvent(Guid eventId)
+    {
+        var outboxMessage = await outboxRepository.GetMessageById(@eventId);
+        outboxRepository.Remove(outboxMessage!);
+
+        await vmRepository.UnitOfWork.SaveAsync();
+
+        logger.LogInformation("The process for the Event {id} is completed", eventId);
+    }
+
     public async Task HandleAsync(StartVmCreation @event)
     {
-        logger.LogInformation("Starting Creation VM process for Event: {event}, VM: {vm}", @event.EventId, @event.VmId);
+        logger.LogInformation("Initialization Creation VM for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
 
         var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId);
         if (vm == null)
@@ -24,17 +43,41 @@ public class CreateVmProcess(
             return;
         }
 
-
-
         vm!.CreateNic();
 
-        var outboxMessage = await outboxRepository.GetMessageById(@event.EventId);
-
-        await vmRepository.UnitOfWork.SaveAsync();
+        await CompleteEvent(@event.EventId);
+        logger.LogInformation("Initialization Creation VM process for Event: {event}, VM: {vm} is completed.", @event.EventId, @event.VmId);
     }
 
-    public Task HandleAsync(CreateNic @event)
+    public async Task HandleAsync(CreateNic @event)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Creation NIC process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+
+        var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId);
+        if (vm == null)
+        {
+            logger.LogInformation("The VM: {vmId} is not found.", @event.VmId);
+            return;
+        }
+
+        vm!.CreateVmResource();
+
+        await CompleteEvent(@event.EventId);
+        logger.LogInformation("Creation NIC process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
+    }
+
+    public async Task HandleAsync(CreateVmResource @event)
+    {
+        logger.LogInformation("Creation VM resource process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+
+        var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId);
+        if (vm == null)
+        {
+            logger.LogInformation("The VM: {vmId} is not found.", @event.VmId);
+            return;
+        }
+
+        await CompleteEvent(@event.EventId);
+        logger.LogInformation("Creation VM resource process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 }

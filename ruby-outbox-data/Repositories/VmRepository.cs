@@ -1,8 +1,8 @@
-﻿using ruby_outbox_core.Contracts.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Models;
 using ruby_outbox_data.Persistency;
-using System.Data.Entity;
 
 namespace ruby_outbox_data.Repositories;
 

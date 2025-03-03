@@ -2,13 +2,13 @@
 
 namespace ruby_outbox_core.Events;
 
-public class StartVmCreation : IEvent
+public class CreateVmResource : IEvent
 {
     public Guid VmId { get; set; }
     public Guid EventId { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public StartVmCreation()
+    public CreateVmResource()
     {
         EventId = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
@@ -16,6 +16,6 @@ public class StartVmCreation : IEvent
 
     public override string ToString()
     {
-        return $"EventType = {nameof(StartVmCreation)}, EventId = {EventId}, VmId = {VmId}";
+        return $"EventType = {nameof(CreateVmResource)}, EventId = {EventId}, VmId = {VmId}";
     }
 }

@@ -5,5 +5,6 @@ public enum VmStatus
     NotStarted,
     Creating,
     CreateNic,
+    CreateVmResource,
     Ready
 }
