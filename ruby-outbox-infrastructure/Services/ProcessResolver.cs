@@ -1,6 +1,6 @@
 ﻿using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Services;
-using ruby_outbox_core.Events;
+using ruby_outbox_core.Events.CreateVm;
 
 namespace ruby_outbox_infrastructure.Services;
 

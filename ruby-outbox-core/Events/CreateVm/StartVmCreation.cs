@@ -1,6 +1,6 @@
 ﻿using ruby_outbox_core.Contracts.Interfaces;
 
-namespace ruby_outbox_core.Events;
+namespace ruby_outbox_core.Events.CreateVm;
 
 public class StartVmCreation : IEvent
 {

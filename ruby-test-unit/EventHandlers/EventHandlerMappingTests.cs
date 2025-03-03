@@ -1,5 +1,5 @@
 ﻿using ruby_outbox_core.Contracts.Interfaces;
-using ruby_outbox_core.Events;
+using ruby_outbox_core.Events.CreateVm;
 using ruby_outbox_core.Models;
 using ruby_outbox_data.Extensions;
 using ruby_test_core.Attributes;

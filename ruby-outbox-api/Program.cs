@@ -1,12 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using PVAD.Vms.Infrastructure.Messaging.OutboxEvent;
 using ruby_outbox_api.Extensions;
+using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_core.Contracts.Options;
+using ruby_outbox_core.Events.CreateVm;
 using ruby_outbox_data.Extensions;
 using ruby_outbox_data.Persistency;
 using ruby_outbox_data.Repositories;
+using ruby_outbox_infrastructure.Processes;
 using ruby_outbox_infrastructure.Profiles;
 using ruby_outbox_infrastructure.Services;
 
@@ -33,10 +36,16 @@ builder.Services.AddScoped<IOutboxMessageRepository, OutboxRepository>();
 builder.Services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
 builder.Services.AddScoped<IProcessResolver, ProcessResolver>();
 
-builder.Services.AddAutoMapper(typeof(InfrastructureProfile));
+// adding events
+builder.Services.AddScoped<IEventHandler<StartVmCreation>, CreateVmProcess>();
+builder.Services.AddScoped<IEventHandler<CreateNic>, CreateVmProcess>();
+builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmProcess>();
+builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateVmProcess>();
+builder.Services.AddScoped<IEventHandler<RunPowerShellCommand>, CreateVmProcess>();
+builder.Services.AddScoped<IEventHandler<CompleteCreateVmProcess>, CreateVmProcess>();
 
-// processes registration
-ProcessesContainer.Init(builder.Services);
+// addind automapper
+builder.Services.AddAutoMapper(typeof(InfrastructureProfile));
 
 // hosted services registration
 builder.Services.AddHostedService<OutboxEventService>();
@@ -52,9 +61,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
