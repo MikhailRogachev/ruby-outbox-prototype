@@ -12,6 +12,11 @@ public class OutboxRepository(
     ApplicationDbContext context
     ) : IOutboxMessageRepository
 {
+    public async Task<OutboxMessage?> GetMessageById(Guid eventId)
+    {
+        return await context.OutboxMessages.FirstOrDefaultAsync(p => p.Id == eventId);
+    }
+
     public async Task<OutboxMessage?> GetMessageToProc()
     {
         var message = await context.OutboxMessages.OrderBy(p => p.CreationDate).FirstOrDefaultAsync(p => p.Status != OutboxMessageStatus.Locked);
@@ -25,6 +30,11 @@ public class OutboxRepository(
 
         await context.SaveAsync();
         return message;
+    }
+
+    public void Remove(OutboxMessage outboxMessage)
+    {
+        context.OutboxMessages.Remove(outboxMessage);
     }
 
     public Task<bool> UpdateAsync(Guid eventId, OutboxMessageStatus status, string message)

@@ -6,5 +6,7 @@ namespace ruby_outbox_core.Contracts.Interfaces.Repositories;
 public interface IOutboxMessageRepository
 {
     Task<OutboxMessage?> GetMessageToProc();
+    Task<OutboxMessage?> GetMessageById(Guid eventId);
     Task<bool> UpdateAsync(Guid eventId, OutboxMessageStatus status, string message);
+    void Remove(OutboxMessage outboxMessage);
 }

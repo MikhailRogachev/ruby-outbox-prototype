@@ -30,11 +30,7 @@ public class VmRepository(ApplicationDbContext context) : IVmRepository
 
     public async Task<Vm?> TryGetVmByIdAsync(Guid vmId)
     {
-        return await context
-            .Vms
-            .Include(x => x.CustomerId)
-            .Include(x => x.CloudProcesses)
-            .FirstOrDefaultAsync(p => p.Id == vmId);
+        return await context.Vms.FirstOrDefaultAsync(p => p.Id == vmId);
     }
 
     public Vm Update(Vm vm)

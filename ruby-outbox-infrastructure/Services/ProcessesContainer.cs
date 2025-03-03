@@ -18,31 +18,3 @@ public static class ProcessesContainer
         Handlers.Add(typeof(CreateNic), typeof(IEventHandler<CreateNic>));
     }
 }
-
-
-public interface IProcessResolver
-{
-    object Resolve(Type @type);
-}
-
-
-public class ProcessResolver(IServiceProvider serviceProvider) : IProcessResolver
-{
-    public object Resolve(Type type)
-    {
-        var n = typeof(IEventHandler<>).GetGenericTypeDefinition();
-        var tspd = n.MakeGenericType(type);
-
-        var sp = serviceProvider.GetService(typeof(IEventHandler<StartVmCreation>))!;
-        var spd = serviceProvider.GetService(tspd)!;
-
-
-        return spd!;
-    }
-}
-
-
-//var openImplementation = _map[typeof(TContract).GetGenericTypeDefinition()];
-//   var closedImplementation = openImplementation.MakeGenericType(
-//       typeof(TContract).GenericTypeArguments);
-//               return Create<TContract>(closedImplementation);
