@@ -2,6 +2,7 @@
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Events.CreateVm;
+using ruby_outbox_core.Models;
 
 namespace ruby_outbox_infrastructure.Processes;
 
@@ -35,16 +36,31 @@ public class CreateVmProcess(
         logger.LogInformation("The process for the Event {id} is completed", eventId);
     }
 
+    /// <summary>
+    /// This function returns <see cref="Vm">VM</see> selected by Id.
+    /// In case the Vm is not found, the function returns null.
+    /// </summary>
+    /// <param name="vmId"></param>
+    /// <returns></returns>
+    private async Task<Vm?> GetVirtualMachineAsync(Guid vmId)
+    {
+        var vm = await vmRepository.TryGetVmByIdAsync(vmId);
+        if (vm == null)
+        {
+            logger.LogInformation("The VM: {vmId} is not found.", vmId);
+            return null;
+        }
+
+        return vm;
+    }
+
     public async Task HandleAsync(StartVmCreation @event)
     {
         logger.LogInformation("Initialization Creation VM for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
 
-        var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId);
+        var vm = await GetVirtualMachineAsync(@event.VmId);
         if (vm == null)
-        {
-            logger.LogInformation("The VM: {vmId} is not found.", @event.VmId);
             return;
-        }
 
         vm!.CreateNic();
 
@@ -56,12 +72,9 @@ public class CreateVmProcess(
     {
         logger.LogInformation("Creation NIC process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
 
-        var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId);
+        var vm = await GetVirtualMachineAsync(@event.VmId);
         if (vm == null)
-        {
-            logger.LogInformation("The VM: {vmId} is not found.", @event.VmId);
             return;
-        }
 
         vm!.CreateVmResource();
 
@@ -73,29 +86,57 @@ public class CreateVmProcess(
     {
         logger.LogInformation("Creation VM resource process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
 
-        var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId);
+        var vm = await GetVirtualMachineAsync(@event.VmId);
         if (vm == null)
-        {
-            logger.LogInformation("The VM: {vmId} is not found.", @event.VmId);
             return;
-        }
+
+        vm.CreateAadLogin();
 
         await CompleteEvent(@event.EventId);
         logger.LogInformation("Creation VM resource process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 
-    public Task HandleAsync(CreateAadLoginExtension @event)
+    public async Task HandleAsync(CreateAadLoginExtension @event)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Creation Aad Login run process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+
+        var vm = await GetVirtualMachineAsync(@event.VmId);
+        if (vm == null)
+            return;
+
+        vm.RunPowershellCommand();
+
+        await CompleteEvent(@event.EventId);
+        logger.LogInformation("Creation Aad Login run process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 
-    public Task HandleAsync(CompleteCreateVmProcess @event)
+    public async Task HandleAsync(RunPowerShellCommand @event)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Run powershell command process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+
+        var vm = await GetVirtualMachineAsync(@event.VmId);
+        if (vm == null)
+            return;
+
+        vm.CompleteVmCreation();
+
+        await CompleteEvent(@event.EventId);
+        logger.LogInformation("Run powershell command process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 
-    public Task HandleAsync(RunPowerShellCommand @event)
+    public async Task HandleAsync(CompleteCreateVmProcess @event)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Complete VM creation process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+
+        var vm = await GetVirtualMachineAsync(@event.VmId);
+        if (vm == null)
+            return;
+
+        // TODO Send VM ready integration process
+
+        await CompleteEvent(@event.EventId);
+        logger.LogInformation("Complete VM creation process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
+
+
 }

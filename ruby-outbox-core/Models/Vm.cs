@@ -1,5 +1,5 @@
 ﻿using ruby_outbox_core.Contracts.Enums;
-using ruby_outbox_core.Events;
+using ruby_outbox_core.Events.CreateVm;
 
 namespace ruby_outbox_core.Models;
 
@@ -37,5 +37,26 @@ public class Vm : Base
         Status = VmStatus.CreateVmResource;
         UpdatedAt = DateTime.UtcNow;
         AddEvent(new CreateVmResource { VmId = Id });
+    }
+
+    public void CreateAadLogin()
+    {
+        Status = VmStatus.CreateAadLogin;
+        UpdatedAt = DateTime.UtcNow;
+        AddEvent(new CreateAadLoginExtension { VmId = Id });
+    }
+
+    public void RunPowershellCommand()
+    {
+        Status = VmStatus.RunPowershellCommand;
+        UpdatedAt = DateTime.UtcNow;
+        AddEvent(new RunPowerShellCommand { VmId = Id });
+    }
+
+    public void CompleteVmCreation()
+    {
+        Status = VmStatus.Ready;
+        UpdatedAt = DateTime.UtcNow;
+        AddEvent(new CompleteCreateVmProcess { VmId = Id });
     }
 }

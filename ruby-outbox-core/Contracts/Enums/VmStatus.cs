@@ -6,5 +6,7 @@ public enum VmStatus
     Creating,
     CreateNic,
     CreateVmResource,
+    CreateAadLogin,
+    RunPowershellCommand,
     Ready
 }

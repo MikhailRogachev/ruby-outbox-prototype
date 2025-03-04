@@ -36,7 +36,7 @@ public class OutboxEventPublisher(
 
         var @event = JsonSerializer.Deserialize(message.Content!, type);
 
-        var method = service.GetType().GetMethod("HandleAsync", new Type[] +{ type });
+        var method = service.GetType().GetMethod("HandleAsync", new Type[] { type });
 
         method!.Invoke(service, new object[] { @event! });
 
