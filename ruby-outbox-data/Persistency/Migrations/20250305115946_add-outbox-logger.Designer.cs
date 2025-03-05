@@ -3,6 +3,7 @@ using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ruby_outbox_data.Persistency;
@@ -12,9 +13,10 @@ using ruby_outbox_data.Persistency;
 namespace ruby_outbox_data.Persistency.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250305115946_add-outbox-logger")]
+    partial class addoutboxlogger
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +24,30 @@ namespace ruby_outbox_data.Persistency.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ruby_outbox_core.Models.CloudProcess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("VmId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VmId");
+
+                    b.ToTable("CloudProcesses");
+                });
 
             modelBuilder.Entity("ruby_outbox_core.Models.Customer", b =>
                 {
@@ -91,7 +117,7 @@ namespace ruby_outbox_data.Persistency.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxErrorLoggers");
+                    b.ToTable("outboxErrorLoggers");
                 });
 
             modelBuilder.Entity("ruby_outbox_core.Models.OutboxMessage", b =>
@@ -162,6 +188,15 @@ namespace ruby_outbox_data.Persistency.Migrations
                     b.ToTable("Vms");
                 });
 
+            modelBuilder.Entity("ruby_outbox_core.Models.CloudProcess", b =>
+                {
+                    b.HasOne("ruby_outbox_core.Models.Vm", "Vm")
+                        .WithMany("CloudProcesses")
+                        .HasForeignKey("VmId");
+
+                    b.Navigation("Vm");
+                });
+
             modelBuilder.Entity("ruby_outbox_core.Models.Vm", b =>
                 {
                     b.HasOne("ruby_outbox_core.Models.Customer", "Customer")
@@ -174,6 +209,11 @@ namespace ruby_outbox_data.Persistency.Migrations
             modelBuilder.Entity("ruby_outbox_core.Models.Customer", b =>
                 {
                     b.Navigation("Vms");
+                });
+
+            modelBuilder.Entity("ruby_outbox_core.Models.Vm", b =>
+                {
+                    b.Navigation("CloudProcesses");
                 });
 #pragma warning restore 612, 618
         }

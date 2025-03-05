@@ -21,23 +21,15 @@ public class ApplicationDbContext(
     private readonly ILogger<ApplicationDbContext> _logger = logger;
 
     public DbSet<Vm> Vms => Set<Vm>();
-    public DbSet<CloudProcess> CloudProcesses => Set<CloudProcess>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<OutboxErrorLogger> OutboxErrorLoggers => Set<OutboxErrorLogger>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // CloudProcess Configuration
-        modelBuilder.Entity<CloudProcess>().Property(p => p.Id).ValueGeneratedNever();
-
         // Vm Configuration
         modelBuilder.Entity<Vm>().Property(p => p.Id).ValueGeneratedNever();
         modelBuilder.Entity<Vm>().Property(p => p.Status).HasConversion(new EnumToStringConverter<VmStatus>());
-        modelBuilder.Entity<Vm>()
-            .HasMany(p => p.CloudProcesses)
-            .WithOne(p => p.Vm)
-            .HasForeignKey(p => p.VmId)
-            .IsRequired(false);
 
         // Customer Configuration
         modelBuilder.Entity<Customer>()

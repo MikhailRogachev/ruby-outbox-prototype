@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ruby_outbox_core.Contracts.Enums;
 using ruby_outbox_core.Models;
 using ruby_outbox_infrastructure.Profiles;
 
@@ -17,4 +18,12 @@ public static class TestHelper
     }
 
     public static Customer GetCustomer() => new Customer();
+
+    public static Vm GetVm(Guid? customerId = null, VmStatus vmStatus = VmStatus.NotStarted)
+    {
+        var vm = new Vm(customerId ?? Guid.NewGuid());
+        vm.Status = vmStatus;
+
+        return vm;
+    }
 }

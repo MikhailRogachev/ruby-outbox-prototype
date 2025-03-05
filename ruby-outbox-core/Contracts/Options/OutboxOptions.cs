@@ -10,4 +10,6 @@ public class OutboxOptions
     public int ExceptionsAllowedBeforeBreak { get; set; }
 
     public int DurationOfBreakSec { get; set; }
+
+    public int RepeatLimit { get; set; }
 }

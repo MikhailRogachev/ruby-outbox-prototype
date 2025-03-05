@@ -1,15 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
+using ruby_outbox_core.Contracts.Options;
 using ruby_outbox_core.Events.CreateVm;
+using ruby_outbox_core.Exceptions;
 using ruby_outbox_core.Models;
 
 namespace ruby_outbox_infrastructure.Processes;
 
 public class CreateVmProcess(
-    ILogger<CreateVmProcess> logger,
-    IVmRepository vmRepository,
-    IOutboxMessageRepository outboxRepository
+        ILogger<CreateVmProcess> logger,
+        IVmRepository vmRepository,
+        IOutboxMessageRepository outboxRepository,
+        IOutboxLoggerRepository loggerRepository,
+        IOptions<OutboxOptions> options
     ) :
     IEventHandler<StartVmCreation>,
     IEventHandler<CreateNic>,
@@ -36,20 +41,23 @@ public class CreateVmProcess(
         logger.LogInformation("The process for the Event {id} is completed", eventId);
     }
 
+    private async Task FailEvent(Guid eventId, Guid customerId, Guid vmId, Exception ex)
+    {
+        var outboxMessage = await outboxRepository.GetMessageById(@eventId);
+
+    }
+
     /// <summary>
     /// This function returns <see cref="Vm">VM</see> selected by Id.
-    /// In case the Vm is not found, the function returns null.
+    /// In case the Vm is not found, the function generates an exception.
     /// </summary>
     /// <param name="vmId"></param>
     /// <returns></returns>
-    private async Task<Vm?> GetVirtualMachineAsync(Guid vmId)
+    private async Task<Vm> GetVirtualMachineAsync(Guid vmId)
     {
         var vm = await vmRepository.TryGetVmByIdAsync(vmId);
         if (vm == null)
-        {
-            logger.LogInformation("The VM: {vmId} is not found.", vmId);
-            return null;
-        }
+            throw new VmNotFoundException($"The VM: {vmId} is not found.");
 
         return vm;
     }
@@ -58,11 +66,18 @@ public class CreateVmProcess(
     {
         logger.LogInformation("Initialization Creation VM for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
 
-        var vm = await GetVirtualMachineAsync(@event.VmId);
-        if (vm == null)
-            return;
+        try
+        {
+            var vm = await GetVirtualMachineAsync(@event.VmId);
+            vm!.CreateNic();
 
-        vm!.CreateNic();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Received Exception {type}: {msg}", ex.GetType(), ex.Message);
+        }
+
+
 
         await CompleteEvent(@event.EventId);
         logger.LogInformation("Initialization Creation VM process for Event: {event}, VM: {vm} is completed.", @event.EventId, @event.VmId);

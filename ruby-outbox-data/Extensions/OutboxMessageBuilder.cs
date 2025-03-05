@@ -23,7 +23,7 @@ public static class OutboxMessageBuilder
                 LastModifiedDate = @event.CreatedAt,
                 ContentType = @event.GetType().Name,
                 Content = JsonSerializer.SerializeToDocument(@event, @event.GetType()),
-                Index = 0,
+                Index = 1,
                 Status = OutboxMessageStatus.Ini,
                 Message = "the record is created."
             });
