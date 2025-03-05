@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Options;
+using ruby_outbox_core.Dto;
 using ruby_outbox_core.Events.CreateVm;
 using ruby_outbox_core.Exceptions;
 using ruby_outbox_core.Models;
@@ -41,9 +42,22 @@ public class CreateVmProcess(
         logger.LogInformation("The process for the Event {id} is completed", eventId);
     }
 
-    private async Task FailEvent(Guid eventId, Guid customerId, Guid vmId, Exception ex)
+    /// <summary>
+    /// 
+    ///
+    ///
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    private async Task FailEventAsync(OutboxErrorMessage message)
     {
-        var outboxMessage = await outboxRepository.GetMessageById(@eventId);
+        var outboxMessage = await outboxRepository.GetMessageById(message.EventId!.Value);
+
+
+
+
+
+
 
     }
 
@@ -53,11 +67,11 @@ public class CreateVmProcess(
     /// </summary>
     /// <param name="vmId"></param>
     /// <returns></returns>
-    private async Task<Vm> GetVirtualMachineAsync(Guid vmId)
+    private async Task<Vm?> GetVirtualMachineAsync(Guid vmId)
     {
         var vm = await vmRepository.TryGetVmByIdAsync(vmId);
         if (vm == null)
-            throw new VmNotFoundException($"The VM: {vmId} is not found.");
+            throw new VmNotFoundException(vmId, $"The VM: {vmId} is not found.");
 
         return vm;
     }
@@ -68,9 +82,16 @@ public class CreateVmProcess(
 
         try
         {
-            var vm = await GetVirtualMachineAsync(@event.VmId);
+            var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId) ?? throw new VmNotFoundException(@event.VmId, "The Virtual Machine is not found");
+
+
             vm!.CreateNic();
 
+        }
+        catch (VmNotFoundException ex)
+        {
+            logger.LogError(ex.Message);
+            await FailEventAsync(new OutboxErrorMessage { EventId = @event.EventId, VmId = @event.VmId, ErrorMessage = ex.Message });
         }
         catch (Exception ex)
         {

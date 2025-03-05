@@ -1,8 +1,8 @@
 ﻿namespace ruby_outbox_core.Exceptions;
 
-public class VmNotFoundException : Exception
+public class VmNotFoundException : OutboxServiceException
 {
-    public VmNotFoundException(string message) : base(message)
+    public VmNotFoundException(Guid vmId, string message) : base(vmId: vmId, message: message)
     {
     }
 }
