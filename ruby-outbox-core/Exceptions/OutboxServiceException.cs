@@ -1,6 +1,4 @@
-﻿using ruby_outbox_core.Dto;
-
-namespace ruby_outbox_core.Exceptions;
+﻿namespace ruby_outbox_core.Exceptions;
 
 public class OutboxServiceException : Exception
 {
@@ -20,16 +18,4 @@ public class OutboxServiceException : Exception
     {
         VmId = vmId;
     }
-
-    public virtual OutboxErrorMessage GetLogMessage()
-    {
-        return new OutboxErrorMessage
-        {
-            CustomerId = CustomerId,
-            VmId = VmId,
-            EventId = EventId,
-            ErrorMessage = Message
-        };
-    }
-
 }

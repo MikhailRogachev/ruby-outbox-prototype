@@ -21,7 +21,7 @@ public class Vm : Base
     {
         Status = VmStatus.Creating;
         UpdatedAt = DateTime.UtcNow;
-        AddEvent(new StartVmCreation { VmId = Id });
+        AddEvent(new StartVmCreation { VmId = Id, CustomerId = CustomerId!.Value });
     }
 
     public void CreateNic()

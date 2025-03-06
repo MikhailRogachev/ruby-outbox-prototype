@@ -9,7 +9,7 @@ public class OutboxLoggerRepository(ApplicationDbContext context) : IOutboxLogge
 {
     public IUnitOfWork UnitOfWork => context;
 
-    public OutboxMessage CreateRecord(OutboxMessage record)
+    public OutboxErrorLogger CreateRecord(OutboxErrorLogger record)
     {
         return context.Add(record).Entity;
     }

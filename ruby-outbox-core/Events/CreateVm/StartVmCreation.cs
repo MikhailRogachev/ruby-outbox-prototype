@@ -7,6 +7,7 @@ public class StartVmCreation : IEvent
     public Guid VmId { get; set; }
     public Guid EventId { get; set; }
     public DateTime CreatedAt { get; set; }
+    public Guid CustomerId { get; set; }
 
     public StartVmCreation()
     {

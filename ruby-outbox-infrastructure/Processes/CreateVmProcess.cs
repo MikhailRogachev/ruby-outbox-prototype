@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Options;
 using ruby_outbox_core.Dto;
@@ -16,13 +15,13 @@ public class CreateVmProcess(
         IOutboxMessageRepository outboxRepository,
         IOutboxLoggerRepository loggerRepository,
         IOptions<OutboxOptions> options
-    ) :
-    IEventHandler<StartVmCreation>,
-    IEventHandler<CreateNic>,
-    IEventHandler<CreateVmResource>,
-    IEventHandler<CreateAadLoginExtension>,
-    IEventHandler<CompleteCreateVmProcess>,
-    IEventHandler<RunPowerShellCommand>
+    )
+//:
+//IEventHandler<CreateNic>,
+//IEventHandler<CreateVmResource>,
+//IEventHandler<CreateAadLoginExtension>,
+//IEventHandler<CompleteCreateVmProcess>,
+//IEventHandler<RunPowerShellCommand>
 {
 
     /// <summary>
@@ -76,33 +75,7 @@ public class CreateVmProcess(
         return vm;
     }
 
-    public async Task HandleAsync(StartVmCreation @event)
-    {
-        logger.LogInformation("Initialization Creation VM for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
 
-        try
-        {
-            var vm = await vmRepository.TryGetVmByIdAsync(@event.VmId) ?? throw new VmNotFoundException(@event.VmId, "The Virtual Machine is not found");
-
-
-            vm!.CreateNic();
-
-        }
-        catch (VmNotFoundException ex)
-        {
-            logger.LogError(ex.Message);
-            await FailEventAsync(new OutboxErrorMessage { EventId = @event.EventId, VmId = @event.VmId, ErrorMessage = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("Received Exception {type}: {msg}", ex.GetType(), ex.Message);
-        }
-
-
-
-        await CompleteEvent(@event.EventId);
-        logger.LogInformation("Initialization Creation VM process for Event: {event}, VM: {vm} is completed.", @event.EventId, @event.VmId);
-    }
 
     public async Task HandleAsync(CreateNic @event)
     {

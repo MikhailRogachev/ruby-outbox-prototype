@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ruby_outbox_core.Contracts.Enums;
+using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Models;
 using ruby_outbox_data.Persistency;
@@ -8,10 +8,11 @@ using ruby_outbox_data.Persistency;
 namespace ruby_outbox_data.Repositories;
 
 public class OutboxRepository(
-    ILogger<OutboxRepository> logger,
     ApplicationDbContext context
     ) : IOutboxMessageRepository
 {
+    public IUnitOfWork UnitOfWork => context;
+
     public async Task<OutboxMessage?> GetMessageById(Guid eventId)
     {
         return await context.OutboxMessages.FirstOrDefaultAsync(p => p.Id == eventId);
