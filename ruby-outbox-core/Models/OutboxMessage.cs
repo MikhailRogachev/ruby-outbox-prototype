@@ -13,4 +13,11 @@ public class OutboxMessage
     public string? Message { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime LastModifiedDate { get; set; }
+
+    public void Repeat()
+    {
+        Status = OutboxMessageStatus.Ini;
+        Index++;
+        LastModifiedDate = DateTime.UtcNow;
+    }
 }

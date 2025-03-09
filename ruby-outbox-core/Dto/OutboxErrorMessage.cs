@@ -10,5 +10,5 @@ public class OutboxErrorMessage
     public string ErrorMessage { get; set; } = string.Empty;
 
     [JsonIgnore]
-    public required Type ErrorType { get; set; }
+    public Type ErrorType { get; set; }
 }

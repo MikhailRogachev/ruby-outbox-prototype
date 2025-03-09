@@ -39,11 +39,11 @@ builder.Services.AddScoped<IProcessResolver, ProcessResolver>();
 
 // adding events
 builder.Services.AddScoped<IEventHandler<StartVmCreation>, StartVmCreatingEventHandler>();
-//builder.Services.AddScoped<IEventHandler<CreateNic>, CreateVmProcess>();
-//builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmProcess>();
-//builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateVmProcess>();
-//builder.Services.AddScoped<IEventHandler<RunPowerShellCommand>, CreateVmProcess>();
-//builder.Services.AddScoped<IEventHandler<CompleteCreateVmProcess>, CreateVmProcess>();
+builder.Services.AddScoped<IEventHandler<CreateNic>, CreateNicEventHandler>();
+builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmResourceEventHandler>();
+builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateAadLoginEventHandler>();
+builder.Services.AddScoped<IEventHandler<RunPowerShellCommand>, RunPsCommandHandler>();
+builder.Services.AddScoped<IEventHandler<CompleteCreateVmProcess>, CompleteVmCreateEventHandler>();
 
 // addind automapper
 builder.Services.AddAutoMapper(typeof(InfrastructureProfile));

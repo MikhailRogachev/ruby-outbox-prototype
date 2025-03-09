@@ -16,6 +16,6 @@ public class CreateNic : IEvent
 
     public override string ToString()
     {
-        return $"EventType = {nameof(CreateNic)}, EventId = {EventId}, VmId = {VmId}";
+        return $"EventType = {nameof(CreateVmResource)}, EventId = {EventId}, VmId = {VmId}";
     }
 }

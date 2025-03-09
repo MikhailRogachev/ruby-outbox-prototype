@@ -35,6 +35,7 @@ public class StartVmCreatingEventHandler : BaseEventHandler, IEventHandler<Start
                 ?? throw new VmNotFoundException(@event.VmId, $"The Virtual Machine {@event.VmId} for Customer {@event.CustomerId} is not found");
 
             // do something
+            //throw new OutboxServiceException(@event.EventId, @event.CustomerId, @event.VmId, "Test Exception");
 
             vm!.CreateNic();
             await CompleteEventAsync(@event.EventId);

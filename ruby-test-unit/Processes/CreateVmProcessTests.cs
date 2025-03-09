@@ -31,7 +31,7 @@ public class StartVmCreationEventHandlerTests
 
         // assert
         vm.Status.Should().Be(VmStatus.CreateNic);
-        vm.Events.Any(p => p.GetType() == typeof(CreateNic)).Should().BeTrue();
+        vm.Events.Any(p => p.GetType() == typeof(CreateVmResource)).Should().BeTrue();
     }
 
     [Theory, AutoMock]

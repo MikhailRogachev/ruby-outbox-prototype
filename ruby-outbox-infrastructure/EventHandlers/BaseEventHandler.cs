@@ -35,7 +35,25 @@ public class BaseEventHandler
     {
         if (message.ErrorType == typeof(VmNotFoundException))
             await VmNotFound_FailEventAsync(message);
+        else if (message.ErrorType == typeof(OutboxServiceException))
+            await OutboxOperational_FailEventAsync(message);
+    }
 
+    private async Task OutboxOperational_FailEventAsync(OutboxErrorMessage message)
+    {
+        var outboxMessage = await outboxRepository.GetMessageById(message.EventId!.Value);
+
+        if (outboxMessage!.Index == options.Value.RepeatLimit)
+        {
+            outboxRepository.Remove(outboxMessage!);
+
+            // add to critical logger
+            var logMessage = GetErrorLoggerMessage(message);
+            loggerRepository.CreateRecord(logMessage);
+        }
+
+        outboxMessage.Repeat();
+        outboxRepository.Update(outboxMessage);
     }
 
     /// <summary>
@@ -51,16 +69,18 @@ public class BaseEventHandler
         var outboxMessage = await outboxRepository.GetMessageById(message.EventId!.Value);
         outboxRepository.Remove(outboxMessage!);
 
-        var comment = JsonSerializer.Serialize<OutboxErrorMessage>(message);
-
         // add to critical logger
-        var logMessage = new OutboxErrorLogger
+        var logMessage = GetErrorLoggerMessage(message);
+        loggerRepository.CreateRecord(logMessage);
+    }
+
+    private OutboxErrorLogger GetErrorLoggerMessage(OutboxErrorMessage message)
+    {
+        return new OutboxErrorLogger
         {
             CustomerId = message.CustomerId!.Value,
             UpdatedAt = DateTime.UtcNow,
-            Comment = comment
+            Comment = JsonSerializer.Serialize<OutboxErrorMessage>(message)
         };
-
-        loggerRepository.CreateRecord(logMessage);
     }
 }

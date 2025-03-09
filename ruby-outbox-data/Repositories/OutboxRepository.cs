@@ -38,8 +38,8 @@ public class OutboxRepository(
         context.OutboxMessages.Remove(outboxMessage);
     }
 
-    public Task<bool> UpdateAsync(Guid eventId, OutboxMessageStatus status, string message)
+    public OutboxMessage Update(OutboxMessage outboxMessage)
     {
-        throw new NotImplementedException();
+        return context.Update(outboxMessage).Entity;
     }
 }
