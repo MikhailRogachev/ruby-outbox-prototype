@@ -10,17 +10,15 @@ namespace ruby_outbox_infrastructure.EventHandlers.CreateVm;
 public class CreateVmResourceEventHandler : BaseEventHandler, IEventHandler<CreateVmResource>
 {
     private readonly IVmRepository _vmRepository;
-    private readonly ILogger<CreateVmResourceEventHandler> _logger;
 
     public CreateVmResourceEventHandler(
         ILogger<CreateVmResourceEventHandler> logger,
         IVmRepository vmRepository,
         IOutboxMessageRepository outboxRepository,
         IOutboxLoggerRepository loggerRepository,
-        IOptions<OutboxOptions> options) : base(outboxRepository, loggerRepository, options)
+        IOptions<OutboxOptions> options) : base(logger, outboxRepository, loggerRepository, options)
     {
         _vmRepository = vmRepository;
-        _logger = logger;
     }
 
     public async Task HandleAsync(CreateVmResource @event)
@@ -31,9 +29,14 @@ public class CreateVmResourceEventHandler : BaseEventHandler, IEventHandler<Crea
         if (vm == null)
             return;
 
+        DoSomething(nameof(CreateVmResourceEventHandler));
+
         vm!.CreateAadLogin();
 
         await CompleteEventAsync(@event.EventId);
+
+        await _vmRepository.UnitOfWork.SaveAsync();
+
         _logger.LogInformation("Creation NIC process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 }

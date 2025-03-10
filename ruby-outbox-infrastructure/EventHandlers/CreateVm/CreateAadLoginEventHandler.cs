@@ -10,17 +10,15 @@ namespace ruby_outbox_infrastructure.EventHandlers.CreateVm;
 public class CreateAadLoginEventHandler : BaseEventHandler, IEventHandler<CreateAadLoginExtension>
 {
     private readonly IVmRepository _vmRepository;
-    private readonly ILogger<CreateAadLoginEventHandler> _logger;
 
     public CreateAadLoginEventHandler(
         ILogger<CreateAadLoginEventHandler> logger,
         IVmRepository vmRepository,
         IOutboxMessageRepository outboxRepository,
         IOutboxLoggerRepository loggerRepository,
-        IOptions<OutboxOptions> options) : base(outboxRepository, loggerRepository, options)
+        IOptions<OutboxOptions> options) : base(logger, outboxRepository, loggerRepository, options)
     {
         _vmRepository = vmRepository;
-        _logger = logger;
     }
 
     public async Task HandleAsync(CreateAadLoginExtension @event)
@@ -31,9 +29,14 @@ public class CreateAadLoginEventHandler : BaseEventHandler, IEventHandler<Create
         if (vm == null)
             return;
 
+        DoSomething(nameof(CreateAadLoginEventHandler));
+
         vm.RunPowershellCommand();
 
         await CompleteEventAsync(@event.EventId);
+
+        await _vmRepository.UnitOfWork.SaveAsync();
+
         _logger.LogInformation("Creation Aad Login run process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 }

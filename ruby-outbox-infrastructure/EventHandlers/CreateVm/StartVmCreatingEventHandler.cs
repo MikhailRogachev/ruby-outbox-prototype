@@ -12,17 +12,15 @@ namespace ruby_outbox_infrastructure.EventHandlers.CreateVm;
 public class StartVmCreatingEventHandler : BaseEventHandler, IEventHandler<StartVmCreation>
 {
     private readonly IVmRepository _vmRepository;
-    private readonly ILogger<StartVmCreatingEventHandler> _logger;
 
     public StartVmCreatingEventHandler(
             ILogger<StartVmCreatingEventHandler> logger,
             IVmRepository vmRepository,
             IOutboxMessageRepository outboxRepository,
             IOutboxLoggerRepository loggerRepository,
-            IOptions<OutboxOptions> options) : base(outboxRepository, loggerRepository, options)
+            IOptions<OutboxOptions> options) : base(logger, outboxRepository, loggerRepository, options)
     {
         _vmRepository = vmRepository;
-        _logger = logger;
     }
 
     public async Task HandleAsync(StartVmCreation @event)
@@ -36,6 +34,8 @@ public class StartVmCreatingEventHandler : BaseEventHandler, IEventHandler<Start
 
             // do something
             //throw new OutboxServiceException(@event.EventId, @event.CustomerId, @event.VmId, "Test Exception");
+
+            DoSomething(nameof(StartVmCreatingEventHandler));
 
             vm!.CreateNic();
             await CompleteEventAsync(@event.EventId);

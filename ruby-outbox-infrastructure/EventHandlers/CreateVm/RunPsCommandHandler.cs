@@ -10,17 +10,15 @@ namespace ruby_outbox_infrastructure.EventHandlers.CreateVm;
 public class RunPsCommandHandler : BaseEventHandler, IEventHandler<RunPowerShellCommand>
 {
     private readonly IVmRepository _vmRepository;
-    private readonly ILogger<RunPsCommandHandler> _logger;
 
     public RunPsCommandHandler(
         ILogger<RunPsCommandHandler> logger,
         IVmRepository vmRepository,
         IOutboxMessageRepository outboxRepository,
         IOutboxLoggerRepository loggerRepository,
-        IOptions<OutboxOptions> options) : base(outboxRepository, loggerRepository, options)
+        IOptions<OutboxOptions> options) : base(logger, outboxRepository, loggerRepository, options)
     {
         _vmRepository = vmRepository;
-        _logger = logger;
     }
 
     public async Task HandleAsync(RunPowerShellCommand @event)
@@ -31,9 +29,14 @@ public class RunPsCommandHandler : BaseEventHandler, IEventHandler<RunPowerShell
         if (vm == null)
             return;
 
+        DoSomething(nameof(RunPsCommandHandler));
+
         vm.CompleteVmCreation();
 
         await CompleteEventAsync(@event.EventId);
+
+        await _vmRepository.UnitOfWork.SaveAsync();
+
         _logger.LogInformation("Run powershell command process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
     }
 }

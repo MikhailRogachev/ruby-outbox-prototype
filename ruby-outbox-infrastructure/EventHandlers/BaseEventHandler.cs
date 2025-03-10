@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Options;
 using ruby_outbox_core.Dto;
@@ -10,25 +11,42 @@ namespace ruby_outbox_infrastructure.EventHandlers;
 
 public class BaseEventHandler
 {
-    private IOutboxMessageRepository outboxRepository;
-    private IOutboxLoggerRepository loggerRepository;
-    private IOptions<OutboxOptions> options;
+    private IOutboxMessageRepository _outboxRepository;
+    private IOutboxLoggerRepository _loggerRepository;
+    private IOptions<OutboxOptions> _options;
+    private Random randomGen = new Random();
+
+    protected readonly ILogger<BaseEventHandler> _logger;
 
     public BaseEventHandler(
+        ILogger<BaseEventHandler> logger,
         IOutboxMessageRepository outboxRepository,
         IOutboxLoggerRepository loggerRepository,
         IOptions<OutboxOptions> options
         )
     {
-        this.outboxRepository = outboxRepository;
-        this.loggerRepository = loggerRepository;
-        this.options = options;
+        _logger = logger;
+        _outboxRepository = outboxRepository;
+        _loggerRepository = loggerRepository;
+        _options = options;
+    }
+
+    protected bool DoSomething(string name)
+    {
+        int mSec = randomGen.Next(1000, 10000);
+
+        _logger.LogInformation("Start {name} process for {msec} mS", name, mSec);
+
+        Thread.Sleep(mSec);
+
+        _logger.LogInformation("The process {name} is completed", name);
+        return true;
     }
 
     protected async Task CompleteEventAsync(Guid eventId)
     {
-        var outboxMessage = await outboxRepository.GetMessageById(@eventId);
-        outboxRepository.Remove(outboxMessage!);
+        var outboxMessage = await _outboxRepository.GetMessageById(@eventId);
+        _outboxRepository.Remove(outboxMessage!);
     }
 
     protected async Task FailEventAsync(OutboxErrorMessage message)
@@ -41,19 +59,19 @@ public class BaseEventHandler
 
     private async Task OutboxOperational_FailEventAsync(OutboxErrorMessage message)
     {
-        var outboxMessage = await outboxRepository.GetMessageById(message.EventId!.Value);
+        var outboxMessage = await _outboxRepository.GetMessageById(message.EventId!.Value);
 
-        if (outboxMessage!.Index == options.Value.RepeatLimit)
+        if (outboxMessage!.Index == _options.Value.RepeatLimit)
         {
-            outboxRepository.Remove(outboxMessage!);
+            _outboxRepository.Remove(outboxMessage!);
 
             // add to critical logger
             var logMessage = GetErrorLoggerMessage(message);
-            loggerRepository.CreateRecord(logMessage);
+            _loggerRepository.CreateRecord(logMessage);
         }
 
         outboxMessage.Repeat();
-        outboxRepository.Update(outboxMessage);
+        _outboxRepository.Update(outboxMessage);
     }
 
     /// <summary>
@@ -66,12 +84,12 @@ public class BaseEventHandler
     /// <returns></returns>
     private async Task VmNotFound_FailEventAsync(OutboxErrorMessage message)
     {
-        var outboxMessage = await outboxRepository.GetMessageById(message.EventId!.Value);
-        outboxRepository.Remove(outboxMessage!);
+        var outboxMessage = await _outboxRepository.GetMessageById(message.EventId!.Value);
+        _outboxRepository.Remove(outboxMessage!);
 
         // add to critical logger
         var logMessage = GetErrorLoggerMessage(message);
-        loggerRepository.CreateRecord(logMessage);
+        _loggerRepository.CreateRecord(logMessage);
     }
 
     private OutboxErrorLogger GetErrorLoggerMessage(OutboxErrorMessage message)

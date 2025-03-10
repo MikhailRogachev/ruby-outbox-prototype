@@ -28,7 +28,7 @@ public class Vm : Base
     {
         Status = VmStatus.CreateNic;
         UpdatedAt = DateTime.UtcNow;
-        AddEvent(new CreateVmResource { VmId = Id });
+        AddEvent(new CreateNic { VmId = Id });
     }
 
     public void CreateVmResource()
