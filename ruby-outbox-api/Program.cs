@@ -37,8 +37,10 @@ builder.Services.AddScoped<IOutboxMessageRepository, OutboxRepository>();
 builder.Services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
 builder.Services.AddScoped<IProcessResolver, ProcessResolver>();
 
+builder.Services.AddScoped<IOptionsProvider, OptionsProvider>();
+
 // adding events
-builder.Services.AddScoped<IEventHandler<StartVmCreation>, StartVmCreatingEventHandler>();
+//builder.Services.AddScoped<IEventHandler<StartVmCreation>, StartVmCreatingEventHandler>();
 builder.Services.AddScoped<IEventHandler<CreateNic>, CreateNicEventHandler>();
 builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmResourceEventHandler>();
 builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateAadLoginEventHandler>();

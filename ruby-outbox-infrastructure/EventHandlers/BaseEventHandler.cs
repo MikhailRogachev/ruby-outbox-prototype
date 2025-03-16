@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Options;
 using ruby_outbox_core.Dto;
@@ -13,7 +15,7 @@ public class BaseEventHandler
 {
     private IOutboxMessageRepository _outboxRepository;
     private IOutboxLoggerRepository _loggerRepository;
-    private IOptions<OutboxOptions> _options;
+    private OutboxOptions _options;
     private Random randomGen = new Random();
 
     protected readonly ILogger<BaseEventHandler> _logger;
@@ -28,7 +30,16 @@ public class BaseEventHandler
         _logger = logger;
         _outboxRepository = outboxRepository;
         _loggerRepository = loggerRepository;
-        _options = options;
+        _options = options.Value;
+    }
+
+    [ActivatorUtilitiesConstructor]
+    public BaseEventHandler(IServiceProvider serviceProvider)
+    {
+        _outboxRepository = serviceProvider.GetRequiredService<IOutboxMessageRepository>();
+        _loggerRepository = serviceProvider.GetRequiredService<IOutboxLoggerRepository>();
+        _options = serviceProvider.GetRequiredService<IOptionsProvider>().OutboxOptions;
+        _logger = serviceProvider.GetRequiredService<ILogger<BaseEventHandler>>();
     }
 
     protected bool DoSomething(string name)
