@@ -72,7 +72,7 @@ public class BaseEventHandler
     {
         var outboxMessage = await _outboxRepository.GetMessageById(message.EventId!.Value);
 
-        if (outboxMessage!.Index == _options.Value.RepeatLimit)
+        if (outboxMessage!.Index == _options.RepeatLimit)
         {
             _outboxRepository.Remove(outboxMessage!);
 
