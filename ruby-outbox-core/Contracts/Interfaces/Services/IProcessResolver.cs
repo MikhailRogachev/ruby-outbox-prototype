@@ -3,4 +3,5 @@
 public interface IProcessResolver
 {
     object Resolve(Type @type);
+    Type ResolveType(Type @type);
 }

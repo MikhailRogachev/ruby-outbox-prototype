@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
@@ -19,6 +20,12 @@ public class CreateAadLoginEventHandler : BaseEventHandler, IEventHandler<Create
         IOptions<OutboxOptions> options) : base(logger, outboxRepository, loggerRepository, options)
     {
         _vmRepository = vmRepository;
+    }
+
+    [ActivatorUtilitiesConstructor]
+    public CreateAadLoginEventHandler(IServiceProvider serviceProvider) : base(serviceProvider)
+    {
+        _vmRepository = serviceProvider.GetRequiredService<IVmRepository>();
     }
 
     public async Task HandleAsync(CreateAadLoginExtension @event)

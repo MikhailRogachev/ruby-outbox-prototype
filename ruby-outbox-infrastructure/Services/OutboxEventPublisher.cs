@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Interfaces.Services;
-using ruby_outbox_core.Events.CreateVm;
 using System.Text.Json;
 
 namespace ruby_outbox_infrastructure.Services;
@@ -30,28 +29,14 @@ public class OutboxEventPublisher(
         Type type = TryGetType(message!.ContentType);   // If the type is null - what to do?
         logger.LogInformation("The Type is {tp}", type);
 
+        var serviceType = resolver.ResolveType(type);
+        var service = ActivatorUtilities.CreateInstance(serviceProvider, serviceType, new object[] { serviceProvider });
 
-        if (type == typeof(StartVmCreation))
-        {
-            var service = ActivatorUtilities.CreateInstance(serviceProvider, type, new object[] { serviceProvider });
+        var @event = JsonSerializer.Deserialize(message.Content!, type);
 
-            var @event = JsonSerializer.Deserialize(message.Content!, type);
+        var method = service.GetType().GetMethod("HandleAsync", new Type[] { type });
 
-            var method = service.GetType().GetMethod("HandleAsync", new Type[] { type });
-
-            method!.Invoke(service, new object[] { @event! });
-        }
-        else
-        {
-            var service = resolver.Resolve(type); // if the service is not resolved - what to do?
-
-            var @event = JsonSerializer.Deserialize(message.Content!, type);
-
-            var method = service.GetType().GetMethod("HandleAsync", new Type[] { type });
-
-            method!.Invoke(service, new object[] { @event! });
-        }
-
+        method!.Invoke(service, new object[] { @event! });
 
 
 

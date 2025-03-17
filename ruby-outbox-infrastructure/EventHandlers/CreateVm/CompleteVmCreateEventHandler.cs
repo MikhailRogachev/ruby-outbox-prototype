@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
@@ -7,7 +8,7 @@ using ruby_outbox_core.Events.CreateVm;
 
 namespace ruby_outbox_infrastructure.EventHandlers.CreateVm;
 
-public class CompleteVmCreateEventHandler : BaseEventHandler, IEventHandler<CompleteCreateVmProcess>
+public class CompleteVmCreateEventHandler : BaseEventHandler, IEventHandler<CompleteCreateVmProcess>, IDisposable
 {
     private readonly IVmRepository _vmRepository;
 
@@ -19,6 +20,12 @@ public class CompleteVmCreateEventHandler : BaseEventHandler, IEventHandler<Comp
         IOptions<OutboxOptions> options) : base(logger, outboxRepository, loggerRepository, options)
     {
         _vmRepository = vmRepository;
+    }
+
+    [ActivatorUtilitiesConstructor]
+    public CompleteVmCreateEventHandler(IServiceProvider serviceProvider) : base(serviceProvider)
+    {
+        _vmRepository = serviceProvider.GetRequiredService<IVmRepository>();
     }
 
     public async Task HandleAsync(CompleteCreateVmProcess @event)
@@ -35,5 +42,10 @@ public class CompleteVmCreateEventHandler : BaseEventHandler, IEventHandler<Comp
         await _vmRepository.UnitOfWork.SaveAsync();
 
         _logger.LogInformation("Complete VM creation process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
+    }
+
+    public void Dispose()
+    {
+
     }
 }

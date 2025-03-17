@@ -5,11 +5,9 @@ using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_core.Contracts.Options;
-using ruby_outbox_core.Events.CreateVm;
 using ruby_outbox_data.Extensions;
 using ruby_outbox_data.Persistency;
 using ruby_outbox_data.Repositories;
-using ruby_outbox_infrastructure.EventHandlers.CreateVm;
 using ruby_outbox_infrastructure.Profiles;
 using ruby_outbox_infrastructure.Services;
 
@@ -41,11 +39,11 @@ builder.Services.AddScoped<IOptionsProvider, OptionsProvider>();
 
 // adding events
 //builder.Services.AddScoped<IEventHandler<StartVmCreation>, StartVmCreatingEventHandler>();
-builder.Services.AddScoped<IEventHandler<CreateNic>, CreateNicEventHandler>();
-builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmResourceEventHandler>();
-builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateAadLoginEventHandler>();
-builder.Services.AddScoped<IEventHandler<RunPowerShellCommand>, RunPsCommandHandler>();
-builder.Services.AddScoped<IEventHandler<CompleteCreateVmProcess>, CompleteVmCreateEventHandler>();
+//builder.Services.AddScoped<IEventHandler<CreateNic>, CreateNicEventHandler>();
+//builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmResourceEventHandler>();
+//builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateAadLoginEventHandler>();
+//builder.Services.AddScoped<IEventHandler<RunPowerShellCommand>, RunPsCommandHandler>();
+//builder.Services.AddScoped<IEventHandler<CompleteCreateVmProcess>, CompleteVmCreateEventHandler>();
 
 // addind automapper
 builder.Services.AddAutoMapper(typeof(InfrastructureProfile));
