@@ -30,6 +30,10 @@ public class OutboxEventPublisher(
         logger.LogInformation("The Type is {tp}", type);
 
         var serviceType = resolver.ResolveType(type);
+
+
+
+
         var service = ActivatorUtilities.CreateInstance(serviceProvider, serviceType, new object[] { serviceProvider });
 
         var @event = JsonSerializer.Deserialize(message.Content!, type);
