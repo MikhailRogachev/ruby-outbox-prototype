@@ -1,35 +1,36 @@
-﻿using ruby_outbox_core.Contracts.Interfaces;
+﻿using FluentAssertions;
+using Moq;
 using ruby_outbox_core.Events.CreateVm;
+using ruby_outbox_infrastructure.EventHandlers.CreateVm;
+using ruby_outbox_infrastructure.Services;
 
 namespace ruby_test_unit.Services;
 
 public class ServiceFactoryTests
 {
-    [Fact]
-    public void GetHandlerTypeByEvent()
+    [Theory, MemberData(nameof(GetTypesToResolve))]
+    public void GetHandlerTypeByEvent(Type eventType, Type eventHandler)
     {
-        var handler = typeof(IEventHandler<>).GetGenericTypeDefinition();
-        var handlerType = handler.MakeGenericType(typeof(StartVmCreation));
+        var serviceFactory = new ServiceFactory(new Mock<IServiceProvider>().Object);
+        var response = serviceFactory.Resolve(eventType);
 
-        //var assembly = AppDomain.CurrentDomain.GetAssemblies()
-        //        .FirstOrDefault(a => a.GetName().Name == handlerType.Assembly.GetName().Name);
-
-        //var types = AppDomain.CurrentDomain
-        //    .GetAssemblies()
-        //    .Where(p => p.FullName!.Contains("ruby-outbox-"))
-        //    .SelectMany(p => p.GetTypes());
-
-        var types = AppDomain.CurrentDomain.GetAssemblies();
-
-        //.GetAssemblies()
-        //.GetTypes();
-        //.Where(type => handlerType.IsAssignableFrom(type) && !type.IsInterface);
+        response.Should().Be(eventHandler);
     }
 
-
+    public static TheoryData<Type, Type> GetTypesToResolve()
+    {
+        return new TheoryData<Type, Type>
+        {
+            { typeof(StartVmCreation), typeof(StartVmCreatingEventHandler) },
+            { typeof(CreateNic), typeof(CreateNicEventHandler) },
+            { typeof(StartVmCreation), typeof(StartVmCreatingEventHandler) },
+            { typeof(CreateNic), typeof(CreateNicEventHandler) },
+            { typeof(CreateAadLoginExtension), typeof(CreateAadLoginEventHandler) },
+            { typeof(CreateNic), typeof(CreateNicEventHandler) },
+            { typeof(CreateVmResource), typeof(CreateVmResourceEventHandler) },
+            { typeof(RunPowerShellCommand), typeof(RunPsCommandHandler) },
+            { typeof(CompleteCreateVmProcess), typeof(CompleteVmCreateEventHandler) },
+            { typeof(RunPowerShellCommand), typeof(RunPsCommandHandler) }
+        };
+    }
 }
-
-
-//
-//
-//var sp = serviceProvider.GetService(typeof(IEventHandler<StartVmCreation>))!;

@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ruby_outbox_core.Contracts.Interfaces;
-using ruby_outbox_core.Events.CreateVm;
-using ruby_outbox_infrastructure.EventHandlers.CreateVm;
 
 namespace ruby_outbox_infrastructure.Services;
 
 public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
 {
     private Dictionary<string, Type> _types = new Dictionary<string, Type>();
+    private Dictionary<Type, Type> _handlers = new Dictionary<Type, Type>();
 
     public Type TryGetType(string typeName)
     {
@@ -30,27 +29,31 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
         return type;
     }
 
-    public Type Resolve(Type type)
+    public Type Resolve(Type eventType)
     {
-        //var handler = typeof(IEventHandler<>).GetGenericTypeDefinition();
-        //var handlerType = handler.MakeGenericType(eventType);
+        if (!_handlers.TryGetValue(eventType, out var handler))
+        {
+            var @interface = typeof(IEventHandler<>).GetGenericTypeDefinition();
+            var handlerType = @interface.MakeGenericType(eventType);
 
-        if (type == typeof(StartVmCreation))
-            return typeof(StartVmCreatingEventHandler);
-        else if (type == typeof(CreateNic))
-            return typeof(CreateNicEventHandler);
-        else if (type == typeof(CreateAadLoginExtension))
-            return typeof(CreateAadLoginEventHandler);
-        else if (type == typeof(CompleteCreateVmProcess))
-            return typeof(CompleteVmCreateEventHandler);
-        else if (type == typeof(CreateVmResource))
-            return typeof(CreateVmResourceEventHandler);
-        else if (type == typeof(RunPowerShellCommand))
-            return typeof(RunPsCommandHandler);
+            var types = AppDomain.CurrentDomain
+               .GetAssemblies()
+               .Where(p => p.FullName!.Contains("ruby-outbox-"))
+               .SelectMany(p => p.GetTypes().Where(type => handlerType.IsAssignableFrom(type) && !type.IsInterface));
 
-        return typeof(string);
+            if (types == null || !types.Any())
+                throw new InvalidOperationException($"Not able to resolve event type {eventType.Name}");
+
+            handler = types.First();
+            _handlers.Add(eventType, handler);
+        }
+
+        return handler;
     }
 
+
+
+    // TODO : consider when Resolve generates an error
     public object? GetServiceInstance(Type eventType)
     {
         // get service type to create an instance
@@ -59,6 +62,8 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
         return ActivatorUtilities.CreateInstance(serviceProvider, (Type)serviceType, new object[] { serviceProvider });
     }
 
+
+    // TODO : consider when TryGetType and Resolve generates an error
     public object? GetServiceInstance(string eventName)
     {
         var eventType = TryGetType(eventName);

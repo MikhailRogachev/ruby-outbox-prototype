@@ -21,6 +21,7 @@ public class OutboxEventPublisher(
 
         logger.LogInformation("Found event {eid}", message.Id);
 
+        // TODO : consider when TryGetType generates an error
         var eventType = serviceFactory.TryGetType(message!.ContentType);
         if (eventType == null)
         {
