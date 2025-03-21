@@ -23,12 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ruby-outbox-core\ruby-outbox-core.csproj" />
-    <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
+    <None Include="BackgroundServices\OutboxEventService.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="BackgroundServices\OutboxEventService.cs" />
+    <ProjectReference Include="..\ruby-outbox-core\ruby-outbox-core.csproj" />
+    <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
   </ItemGroup>
 
 </Project>

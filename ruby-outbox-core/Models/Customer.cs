@@ -1,4 +1,6 @@
-﻿namespace ruby_outbox_core.Models;
+﻿using ruby_outbox_core.Contracts.Enums;
+
+namespace ruby_outbox_core.Models;
 /*{
   "MySecret": "azure-subscription-17bdc332-0a80-450f-b4b8-b0300c42498e",
   "KeyVaultConfig:KeyVaultName": "pvad-dev-weu-app-kv",
@@ -11,7 +13,6 @@
 public class Customer : Base
 {
     public virtual ICollection<Vm> Vms { get; set; } = new List<Vm>();
-
     public string ClientSecret { get; set; } = string.Empty;
     public string ClientId { get; set; } = string.Empty;
     public string TenantId { get; set; } = string.Empty;
@@ -19,5 +20,6 @@ public class Customer : Base
     public string Region { get; set; } = string.Empty;
     public string KeyVaultSecret { get; set; } = string.Empty;
     public string ResourceGroup { get; set; } = string.Empty;
+    public CustomerStatus Status { get; set; } = CustomerStatus.Active;
     public Customer() { }
 }

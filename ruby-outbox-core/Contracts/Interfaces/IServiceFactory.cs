@@ -2,5 +2,8 @@
 
 public interface IServiceFactory
 {
-    object? CreateService();
+    Type TryGetType(string typeName);
+    Type Resolve(Type eventType);
+    object? GetServiceInstance(string eventName);
+    object? GetServiceInstance(Type eventType);
 }

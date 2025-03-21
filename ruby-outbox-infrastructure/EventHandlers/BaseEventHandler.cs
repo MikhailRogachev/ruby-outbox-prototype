@@ -1,45 +1,48 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Options;
 using ruby_outbox_core.Dto;
 using ruby_outbox_core.Exceptions;
 using ruby_outbox_core.Models;
+using ruby_outbox_data.Persistency;
+using ruby_outbox_data.Repositories;
 using System.Text.Json;
 
 namespace ruby_outbox_infrastructure.EventHandlers;
 
 public class BaseEventHandler
 {
-    private IOutboxMessageRepository _outboxRepository;
-    private IOutboxLoggerRepository _loggerRepository;
-    private OutboxOptions _options;
-    private Random randomGen = new Random();
+    private readonly ApplicationDbContext _context;
+    private readonly IVmRepository _vmRepository;
+    private readonly IOutboxMessageRepository _outboxRepository;
+    private readonly IOutboxLoggerRepository _loggerRepository;
+    private readonly OutboxOptions _options;
+    private readonly ILogger<BaseEventHandler> _logger;
 
-    protected readonly ILogger<BaseEventHandler> _logger;
+    private readonly Random randomGen = new Random();
 
-    public BaseEventHandler(
-        ILogger<BaseEventHandler> logger,
-        IOutboxMessageRepository outboxRepository,
-        IOutboxLoggerRepository loggerRepository,
-        IOptions<OutboxOptions> options
-        )
-    {
-        _logger = logger;
-        _outboxRepository = outboxRepository;
-        _loggerRepository = loggerRepository;
-        _options = options.Value;
-    }
+    protected IVmRepository VirtualMachineRepository => _vmRepository;
+    protected ILogger<BaseEventHandler> Logger => _logger;
 
     [ActivatorUtilitiesConstructor]
     public BaseEventHandler(IServiceProvider serviceProvider)
     {
-        _outboxRepository = serviceProvider.GetRequiredService<IOutboxMessageRepository>();
-        _loggerRepository = serviceProvider.GetRequiredService<IOutboxLoggerRepository>();
+        // new context instance initialization
+        var contextScoped = serviceProvider.GetRequiredService<ApplicationDbContext>() ?? throw new ArgumentNullException(nameof(ApplicationDbContext));
+        _context = new ApplicationDbContext(contextScoped.DbOptions);
+
+        // outbox options
         _options = serviceProvider.GetRequiredService<IOptionsProvider>().OutboxOptions;
+
+        // retrieve logger
         _logger = serviceProvider.GetRequiredService<ILogger<BaseEventHandler>>();
+
+        // create repositories
+        _vmRepository = new VmRepository(_context);
+        _outboxRepository = new OutboxRepository(_context);
+        _loggerRepository = new OutboxLoggerRepository(_context);
     }
 
     protected bool DoSomething(string name)

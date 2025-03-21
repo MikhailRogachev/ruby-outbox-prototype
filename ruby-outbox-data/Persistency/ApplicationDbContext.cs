@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Logging;
 using ruby_outbox_core.Contracts.Enums;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Models;
@@ -12,14 +11,16 @@ namespace ruby_outbox_data.Persistency;
 /// cd 
 /// dotnet ef migrations remove --project ../ruby-outbox-data --context ApplicationDbContext
 /// </summary>
-public class ApplicationDbContext(
-    DbContextOptions<ApplicationDbContext> options,
-    ILogger<ApplicationDbContext> logger
-        ) : DbContext(options), IUnitOfWork
+public class ApplicationDbContext : DbContext, IUnitOfWork
 {
+    private readonly DbContextOptions<ApplicationDbContext> _dboptions;
 
-    private readonly ILogger<ApplicationDbContext> _logger = logger;
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+        _dboptions = options;
+    }
 
+    public DbContextOptions<ApplicationDbContext> DbOptions => _dboptions;
     public DbSet<Vm> Vms => Set<Vm>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
@@ -32,6 +33,8 @@ public class ApplicationDbContext(
         modelBuilder.Entity<Vm>().Property(p => p.Status).HasConversion(new EnumToStringConverter<VmStatus>());
 
         // Customer Configuration
+        modelBuilder.Entity<Customer>().Property(p => p.Status).HasConversion(new EnumToStringConverter<CustomerStatus>());
+
         modelBuilder.Entity<Customer>()
             .HasMany(p => p.Vms)
             .WithOne(p => p.Customer)

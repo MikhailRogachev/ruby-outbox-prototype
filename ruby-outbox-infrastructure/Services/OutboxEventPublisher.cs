@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ruby_outbox_core.Contracts.Interfaces;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Interfaces.Services;
@@ -10,13 +9,9 @@ namespace ruby_outbox_infrastructure.Services;
 public class OutboxEventPublisher(
     ILogger<OutboxEventPublisher> logger,
     IOutboxMessageRepository repository,
-    IProcessResolver resolver,
-    IServiceProvider serviceProvider
+    IServiceFactory serviceFactory
     ) : IOutboxEventPublisher
 {
-
-    private Dictionary<string, Type> _types = new Dictionary<string, Type>();
-
     public async Task RunAsync()
     {
         var message = await repository.GetMessageToProc();
@@ -26,48 +21,26 @@ public class OutboxEventPublisher(
 
         logger.LogInformation("Found event {eid}", message.Id);
 
-        Type type = TryGetType(message!.ContentType);   // If the type is null - what to do?
-        logger.LogInformation("The Type is {tp}", type);
-
-        var serviceType = resolver.ResolveType(type);
-
-
-
-
-        var service = ActivatorUtilities.CreateInstance(serviceProvider, serviceType, new object[] { serviceProvider });
-
-        var @event = JsonSerializer.Deserialize(message.Content!, type);
-
-        var method = service.GetType().GetMethod("HandleAsync", new Type[] { type });
-
-        method!.Invoke(service, new object[] { @event! });
-
-
-
-
-
-
-
-    }
-
-    private Type TryGetType(string typeName)
-    {
-        if (!_types.TryGetValue(typeName, out var type))
+        var eventType = serviceFactory.TryGetType(message!.ContentType);
+        if (eventType == null)
         {
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == typeof(IEvent).Assembly.GetName().Name);
-
-            if (assembly != null)
-            {
-                type = assembly.GetTypes().FirstOrDefault(p => p.Name == typeName);
-            }
-
-            if (type == null)
-                throw new InvalidOperationException($"Not able to recognize the type {typeName}.");
-
-            _types.Add(typeName, type);
+            logger.LogError("The eventType for the {et} was not identified. Message id - {mid}", message!.ContentType, message.Id);
+            return;
         }
 
-        return type;
+        var service = serviceFactory.GetServiceInstance(eventType);
+        if (service == null)
+        {
+            logger.LogError("The service for the event {en} was not identified. Message id - {mid}", message!.ContentType, message.Id);
+            return;
+        }
+
+        logger.LogInformation("The eventHandler {eh} has been identified for the message id - {mid}", service.GetType(), message.Id);
+
+        var @event = JsonSerializer.Deserialize(message.Content!, eventType);
+
+        var method = service.GetType().GetMethod("HandleAsync", new Type[] { eventType });
+
+        method!.Invoke(service, new object[] { @event! });
     }
 }
