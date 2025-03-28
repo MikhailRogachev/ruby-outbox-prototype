@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 var dbConnection = configuration.GetSection(nameof(DatabaseConfig)).Get<DatabaseConfig>()!;
 builder.Services.AddOptions<OutboxOptions>().Bind(configuration.GetSection(nameof(OutboxOptions)));
+builder.Services.AddOptions<AzureKeyVaultClientConfig>().Bind(configuration.GetSection(nameof(AzureKeyVaultClientConfig)));
 
 // db injection
 builder.Services.AddDbContext<ApplicationDbContext>(db => db.UseNpgsql(dbConnection!.NpgsqlConnectionStringBuilder()));
@@ -33,18 +34,10 @@ builder.Services.AddScoped<IOutboxLoggerRepository, OutboxLoggerRepository>();
 builder.Services.AddScoped<IVmService, VmService>();
 builder.Services.AddScoped<IOutboxMessageRepository, OutboxRepository>();
 builder.Services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
-builder.Services.AddScoped<IProcessResolver, ProcessResolver>();
+builder.Services.AddScoped<ISecretManager, SecretManager>();
 
 builder.Services.AddScoped<IOptionsProvider, OptionsProvider>();
 builder.Services.AddScoped<IServiceFactory, ServiceFactory>();
-
-// adding events
-//builder.Services.AddScoped<IEventHandler<StartVmCreation>, StartVmCreatingEventHandler>();
-//builder.Services.AddScoped<IEventHandler<CreateNic>, CreateNicEventHandler>();
-//builder.Services.AddScoped<IEventHandler<CreateVmResource>, CreateVmResourceEventHandler>();
-//builder.Services.AddScoped<IEventHandler<CreateAadLoginExtension>, CreateAadLoginEventHandler>();
-//builder.Services.AddScoped<IEventHandler<RunPowerShellCommand>, RunPsCommandHandler>();
-//builder.Services.AddScoped<IEventHandler<CompleteCreateVmProcess>, CompleteVmCreateEventHandler>();
 
 // addind automapper
 builder.Services.AddAutoMapper(typeof(InfrastructureProfile));

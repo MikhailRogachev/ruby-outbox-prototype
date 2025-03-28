@@ -5,6 +5,7 @@ using ruby_outbox_infrastructure.EventHandlers.CreateVm;
 
 namespace ruby_outbox_infrastructure.Services;
 
+[Obsolete]
 public class ProcessResolver(IServiceProvider serviceProvider) : IProcessResolver
 {
     public object Resolve(Type type)
