@@ -1,4 +1,5 @@
-﻿using ruby_outbox_core.Contracts.Interfaces.Services;
+﻿using ruby_outbox_core.AzureRequests;
+using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_core.Dto;
 
 namespace ruby_outbox_infrastructure.Services.Azure
@@ -9,7 +10,7 @@ namespace ruby_outbox_infrastructure.Services.Azure
         {
         }
 
-        public Task<RunCommandResponseDto> RunInlineCommandAsync(Dictionary<string, string> @params)
+        public Task<RunCommandResponseDto> RunInlineCommandAsync(AzureInlineCommandRequest request)
         {
             throw new NotImplementedException();
         }

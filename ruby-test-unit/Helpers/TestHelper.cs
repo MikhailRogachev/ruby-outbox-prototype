@@ -2,6 +2,8 @@
 using ruby_outbox_core.Contracts.Enums;
 using ruby_outbox_core.Models;
 using ruby_outbox_infrastructure.Profiles;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace ruby_test_unit.Helpers;
 
@@ -12,6 +14,7 @@ public static class TestHelper
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<InfrastructureProfile>();
+            cfg.AddProfile<RequestsProfile>();
         });
 
         return new Mapper(config);
@@ -25,5 +28,18 @@ public static class TestHelper
         vm.Status = vmStatus;
 
         return vm;
+    }
+
+    public static T GetOptionsFromAppSettings<T>()
+    {
+        FileInfo fi = new FileInfo("appsettings.json");
+        var jsonOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+
+        using StreamReader reader = new(fi.FullName);
+        string body = reader.ReadToEnd();
+        var jsonBody = JsonObject.Parse(body);
+        var jsonBodyParameter = jsonBody![typeof(T).Name];
+
+        return JsonSerializer.Deserialize<T>(jsonBodyParameter!, jsonOptions)!;
     }
 }
