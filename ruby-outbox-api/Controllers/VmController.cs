@@ -7,7 +7,10 @@ namespace ruby_outbox_api.Controllers;
 [ApiController]
 [Route("vms")]
 [Produces("application/json")]
-public class VmController(ILogger<VmController> logger, IVmService vmService) : ControllerBase
+public class VmController(
+    ILogger<VmController> logger,
+    IVmService vmService,
+    IAzureVirtualMachineService azureVmService) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(VmDto), StatusCodes.Status200OK)]
@@ -18,5 +21,12 @@ public class VmController(ILogger<VmController> logger, IVmService vmService) : 
         var vmDto = await vmService.AddVmAsync(dto.CustomerId);
 
         return Ok(vmDto);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetVms()
+    {
+        var dto = await azureVmService.GetVirtualMachinesAsync();
+        return Ok(dto);
     }
 }

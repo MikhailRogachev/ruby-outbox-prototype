@@ -7,7 +7,11 @@ using ruby_outbox_core.Models;
 
 namespace ruby_outbox_infrastructure.Services;
 
-public class VmService(ILogger<VmService> logger, IVmRepository vmRepository, ICustomerRepository customerRepository, IMapper mapper) : IVmService
+public class VmService(
+    ILogger<VmService> logger,
+    IVmRepository vmRepository,
+    ICustomerRepository customerRepository,
+    IMapper mapper) : IVmService
 {
     public async Task<VmDto> AddVmAsync(Guid customerId)
     {

@@ -10,16 +10,18 @@ using ruby_outbox_data.Persistency;
 using ruby_outbox_data.Repositories;
 using ruby_outbox_infrastructure.Profiles;
 using ruby_outbox_infrastructure.Services;
+using ruby_outbox_infrastructure.Services.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// get options
 var configuration = builder.Configuration;
-var dbConnection = configuration.GetSection(nameof(DatabaseConfig)).Get<DatabaseConfig>()!;
+
+// build options
 builder.Services.AddOptions<OutboxOptions>().Bind(configuration.GetSection(nameof(OutboxOptions)));
 builder.Services.AddOptions<AzureKeyVaultClientConfig>().Bind(configuration.GetSection(nameof(AzureKeyVaultClientConfig)));
+builder.Services.AddOptions<PersonalSettingsConfig>().Bind(configuration.GetSection(nameof(PersonalSettingsConfig)));
 
 // db injection
+var dbConnection = configuration.GetSection(nameof(DatabaseConfig)).Get<DatabaseConfig>()!;
 builder.Services.AddDbContext<ApplicationDbContext>(db => db.UseNpgsql(dbConnection!.NpgsqlConnectionStringBuilder()));
 
 builder.Services.AddControllers();
@@ -35,6 +37,7 @@ builder.Services.AddScoped<IVmService, VmService>();
 builder.Services.AddScoped<IOutboxMessageRepository, OutboxRepository>();
 builder.Services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
 builder.Services.AddScoped<ISecretManager, SecretManager>();
+builder.Services.AddScoped<IAzureVirtualMachineService, AzureVirtualMachineService>();
 
 builder.Services.AddScoped<IOptionsProvider, OptionsProvider>();
 builder.Services.AddScoped<IServiceFactory, ServiceFactory>();
