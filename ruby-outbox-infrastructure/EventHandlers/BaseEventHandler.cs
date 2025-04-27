@@ -36,13 +36,14 @@ public class BaseEventHandler
         // outbox options
         _options = serviceProvider.GetRequiredService<IOptionsProvider>().OutboxOptions;
 
-        // retrieve logger
-        _logger = serviceProvider.GetRequiredService<ILogger<BaseEventHandler>>();
-
         // create repositories
         _vmRepository = new VmRepository(_context);
         _outboxRepository = new OutboxRepository(_context);
         _loggerRepository = new OutboxLoggerRepository(_context);
+
+        // retrieve logger
+        _logger = serviceProvider.GetRequiredService<ILogger<BaseEventHandler>>();
+        //_logger = serviceProvider.GetService
     }
 
     protected bool DoSomething(string name)

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Moq;
 using ruby_outbox_core.Events.CreateVm;
 using ruby_outbox_infrastructure.EventHandlers.CreateVm;
 using ruby_outbox_infrastructure.Services;
+using ruby_test_core.Helpers;
 
 namespace ruby_test_unit.Services;
 
@@ -11,10 +11,20 @@ public class ServiceFactoryTests
     [Theory, MemberData(nameof(GetTypesToResolve))]
     public void GetHandlerTypeByEvent(Type eventType, Type eventHandler)
     {
-        var serviceFactory = new ServiceFactory(new Mock<IServiceProvider>().Object);
-        var response = serviceFactory.Resolve(eventType);
+        var serviceFactory = new ServiceFactory(ServiceProviderFactoryHelper.ServiceProvider);
+        var response = serviceFactory.GetServiceInstance(eventType);
 
-        response.Should().Be(eventHandler);
+        response.Instance.Should().BeAssignableTo(eventHandler);
+        response.InstanceType.Should().Be(eventType);
+    }
+
+    [Theory, MemberData(nameof(GetNameToResolve))]
+    public void GetHandlerTypeByEventName(string eventName, Type eventHandler)
+    {
+        var serviceFactory = new ServiceFactory(ServiceProviderFactoryHelper.ServiceProvider);
+        var response = serviceFactory.GetServiceInstance(eventName);
+
+        response.Instance.Should().BeAssignableTo(eventHandler);
     }
 
     public static TheoryData<Type, Type> GetTypesToResolve()
@@ -31,6 +41,23 @@ public class ServiceFactoryTests
             { typeof(RunPowerShellCommand), typeof(RunPsCommandHandler) },
             { typeof(CompleteCreateVmProcess), typeof(CompleteVmCreateEventHandler) },
             { typeof(RunPowerShellCommand), typeof(RunPsCommandHandler) }
+        };
+    }
+
+    public static TheoryData<string, Type> GetNameToResolve()
+    {
+        return new TheoryData<string, Type>
+        {
+            { nameof(StartVmCreation), typeof(StartVmCreatingEventHandler) },
+            { nameof(CreateNic), typeof(CreateNicEventHandler) },
+            { nameof(StartVmCreation), typeof(StartVmCreatingEventHandler) },
+            { nameof(CreateNic), typeof(CreateNicEventHandler) },
+            { nameof(CreateAadLoginExtension), typeof(CreateAadLoginEventHandler) },
+            { nameof(CreateNic), typeof(CreateNicEventHandler) },
+            { nameof(CreateVmResource), typeof(CreateVmResourceEventHandler) },
+            { nameof(RunPowerShellCommand), typeof(RunPsCommandHandler) },
+            { nameof(CompleteCreateVmProcess), typeof(CompleteVmCreateEventHandler) },
+            { nameof(RunPowerShellCommand), typeof(RunPsCommandHandler) }
         };
     }
 }

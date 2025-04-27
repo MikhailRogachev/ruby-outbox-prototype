@@ -8,7 +8,7 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
     private Dictionary<string, Type> _types = new Dictionary<string, Type>();
     private Dictionary<Type, Type> _handlers = new Dictionary<Type, Type>();
 
-    public Type TryGetType(string typeName)
+    private Type TryGetType(string typeName)
     {
         if (!_types.TryGetValue(typeName, out var type))
         {
@@ -29,7 +29,7 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
         return type;
     }
 
-    public Type Resolve(Type eventType)
+    private Type? TryResolve(Type eventType)
     {
         if (!_handlers.TryGetValue(eventType, out var handler))
         {
@@ -42,7 +42,7 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
                .SelectMany(p => p.GetTypes().Where(type => handlerType.IsAssignableFrom(type) && !type.IsInterface));
 
             if (types == null || !types.Any())
-                throw new InvalidOperationException($"Not able to resolve event type {eventType.Name}");
+                return null;
 
             handler = types.First();
             _handlers.Add(eventType, handler);
@@ -51,28 +51,21 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
         return handler;
     }
 
-
-
-    // TODO : consider when Resolve generates an error
-    public object? GetServiceInstance(Type eventType)
-    {
-        // get service type to create an instance
-        var serviceType = Resolve(eventType);
-
-        return ActivatorUtilities.CreateInstance(serviceProvider, (Type)serviceType, new object[] { serviceProvider });
-    }
-
-
-    // TODO : consider when TryGetType and Resolve generates an error
-    public object? GetServiceInstance(string eventName)
+    public (object? Instance, Type? InstanceType) GetServiceInstance(string eventName)
     {
         var eventType = TryGetType(eventName);
+
         if (eventType == null)
-            return null;
+            return (null, null);
 
-        // get service type to create an instance
-        var serviceType = Resolve(eventType);
+        return GetServiceInstance(eventType);
+    }
 
-        return ActivatorUtilities.CreateInstance(serviceProvider, (Type)serviceType, new object[] { serviceProvider });
+    public (object? Instance, Type? InstanceType) GetServiceInstance(Type eventType)
+    {
+        var serviceType = TryResolve(eventType);
+        var instance = ActivatorUtilities.CreateInstance(serviceProvider, serviceType!, new object[] { serviceProvider });
+
+        return (instance, eventType);
     }
 }
