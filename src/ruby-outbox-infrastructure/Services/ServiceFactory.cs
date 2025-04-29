@@ -51,6 +51,10 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
         return handler;
     }
 
+    /// <inheritdoc cref="IServiceFactory.GetServiceInstance(string)"/>
+    /// <remarks>
+    /// If the event handler is not resolved by event name, the function returns a null instance.
+    /// </remarks>
     public (object? Instance, Type? InstanceType) GetServiceInstance(string eventName)
     {
         var eventType = TryGetType(eventName);
@@ -61,6 +65,10 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
         return GetServiceInstance(eventType);
     }
 
+    /// <inheritdoc cref="IServiceFactory.GetServiceInstance(Type)"/>
+    /// <remarks>
+    /// If the event handler is not resolved by event type, the function returns a null instance.
+    /// </remarks>
     public (object? Instance, Type? InstanceType) GetServiceInstance(Type eventType)
     {
         var serviceType = TryResolve(eventType);

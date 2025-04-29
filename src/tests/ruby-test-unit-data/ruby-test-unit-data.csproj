@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ruby-outbox-core\ruby-outbox-core.csproj" />
+    <ProjectReference Include="..\ruby-test-core\ruby-test-core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
