@@ -5,7 +5,7 @@ using ruby_outbox_infrastructure.Profiles;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace ruby_test_unit.Helpers;
+namespace ruby_test_core.Helpers;
 
 public static class TestHelper
 {
@@ -37,9 +37,9 @@ public static class TestHelper
 
         using StreamReader reader = new(fi.FullName);
         string body = reader.ReadToEnd();
-        var jsonBody = JsonObject.Parse(body);
+        var jsonBody = JsonNode.Parse(body);
         var jsonBodyParameter = jsonBody![typeof(T).Name];
 
-        return JsonSerializer.Deserialize<T>(jsonBodyParameter!, jsonOptions)!;
+        return jsonBodyParameter!.Deserialize<T>(jsonOptions)!;
     }
 }

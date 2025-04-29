@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using ruby_outbox_core.AzureRequests;
 using ruby_outbox_core.Contracts.Options;
 using ruby_test_core.Attributes;
-using ruby_test_unit.Helpers;
+using ruby_test_core.Helpers;
 
 namespace ruby_test_unit.Profiles;
 

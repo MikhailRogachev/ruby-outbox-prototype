@@ -3,7 +3,7 @@ using FluentAssertions;
 using ruby_outbox_core.Dto;
 using ruby_outbox_core.Models;
 using ruby_test_core.Attributes;
-using ruby_test_unit.Helpers;
+using ruby_test_core.Helpers;
 
 namespace ruby_test_unit.Profiles;
 

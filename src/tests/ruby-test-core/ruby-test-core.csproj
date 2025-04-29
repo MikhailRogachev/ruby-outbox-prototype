@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\ruby-outbox-api\appsettings.json" Link="appsettings.json" />
+    <Content Include="..\..\ruby-outbox-api\appsettings.json" Link="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ruby-outbox-api\ruby-outbox-api.csproj" />
+    <ProjectReference Include="..\..\ruby-outbox-api\ruby-outbox-api.csproj" />
   </ItemGroup>
 
 </Project>

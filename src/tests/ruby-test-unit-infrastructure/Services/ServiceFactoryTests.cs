@@ -11,7 +11,8 @@ public class ServiceFactoryTests
     [Theory, MemberData(nameof(GetTypesToResolve))]
     public void GetHandlerTypeByEvent(Type eventType, Type eventHandler)
     {
-        var serviceFactory = new ServiceFactory(ServiceProviderFactoryHelper.ServiceProvider);
+        var serviceProvider = ServiceProviderFactoryHelper.Init("appsettings.json");
+        var serviceFactory = new ServiceFactory(serviceProvider.ServiceProvider);
         var response = serviceFactory.GetServiceInstance(eventType);
 
         response.Instance.Should().BeAssignableTo(eventHandler);
@@ -21,7 +22,8 @@ public class ServiceFactoryTests
     [Theory, MemberData(nameof(GetNameToResolve))]
     public void GetHandlerTypeByEventName(string eventName, Type eventHandler)
     {
-        var serviceFactory = new ServiceFactory(ServiceProviderFactoryHelper.ServiceProvider);
+        var serviceProvider = ServiceProviderFactoryHelper.Init("appsettings.json");
+        var serviceFactory = new ServiceFactory(serviceProvider.ServiceProvider);
         var response = serviceFactory.GetServiceInstance(eventName);
 
         response.Instance.Should().BeAssignableTo(eventHandler);
