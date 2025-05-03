@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ruby_outbox_core.Contracts.Interfaces.EventHub;
 using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_core.Dto;
 
@@ -10,7 +11,8 @@ namespace ruby_outbox_api.Controllers;
 public class VmController(
     ILogger<VmController> logger,
     IVmService vmService,
-    IAzureVirtualMachineService azureVmService) : ControllerBase
+    IAzureVirtualMachineService azureVmService,
+    IProducer eventProducer) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(VmDto), StatusCodes.Status200OK)]
@@ -26,7 +28,13 @@ public class VmController(
     [HttpGet]
     public async Task<IActionResult> GetVms()
     {
-        var dto = await azureVmService.GetVirtualMachinesAsync();
-        return Ok(dto);
+        //var dto = await azureVmService.GetVirtualMachinesAsync();
+
+        await eventProducer.PublishAsync();
+
+
+
+
+        return Ok();
     }
 }

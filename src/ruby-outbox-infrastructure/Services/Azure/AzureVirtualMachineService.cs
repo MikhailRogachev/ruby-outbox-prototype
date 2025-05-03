@@ -18,7 +18,7 @@ public class AzureVirtualMachineService : IAzureVirtualMachineService
     private readonly string _vmsAdvancedTadKey = "PVAD_VM_ID";
     private readonly string _runningStatusCode = "PowerState";
     private readonly string _provosionStatusCode = "ProvisioningState";
-    private ILogger<AzureVirtualMachineService> _logger;
+    private readonly ILogger<AzureVirtualMachineService> _logger;
     private readonly ISecretManager _secretManager;
     private readonly PersonalSettingsConfig _personalSettingsConfig;
 

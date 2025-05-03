@@ -7,4 +7,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.13.2" />
+    <PackageReference Include="Azure.Messaging.EventHubs" Version="5.12.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ruby-outbox-core\ruby-outbox-core.csproj" />
+    <ProjectReference Include="..\ruby-outbox-data\ruby-outbox-data.csproj" />
+    <ProjectReference Include="..\ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

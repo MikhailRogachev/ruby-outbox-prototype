@@ -24,7 +24,7 @@ public class SecretManager : ISecretManager
     public SecretManager(IOptions<AzureKeyVaultClientConfig> azureConfig)
     {
         var keyVaultUri = new Uri($"https://{azureConfig.Value.KeyVaultName}.vault.azure.net");
-        var credentials = new ClientSecretCredential(azureConfig.Value.TenantId, azureConfig.Value.ClientId, azureConfig.Value.ClientSecret);
+        var credentials = new DefaultAzureCredential();
 
         Client = new SecretClient(keyVaultUri, credentials);
     }
