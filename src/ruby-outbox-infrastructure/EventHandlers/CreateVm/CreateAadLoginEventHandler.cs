@@ -14,7 +14,7 @@ public class CreateAadLoginEventHandler : BaseEventHandler, IEventHandler<Create
 
     public async Task HandleAsync(CreateAadLoginExtension @event)
     {
-        Logger.LogInformation("Creation Aad Login run process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Creation Aad Login run process for Event: {event}, VM: {vm} is started", DateTime.Now, @event.EventId, @event.VmId);
 
         var vm = await VirtualMachineRepository.TryGetVmByIdAsync(@event.VmId);
         if (vm == null)
@@ -28,6 +28,6 @@ public class CreateAadLoginEventHandler : BaseEventHandler, IEventHandler<Create
 
         await VirtualMachineRepository.UnitOfWork.SaveAsync();
 
-        Logger.LogInformation("Creation Aad Login run process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Creation Aad Login run process for Event: {event}, VM: {vm} is completed", DateTime.Now, @event.EventId, @event.VmId);
     }
 }

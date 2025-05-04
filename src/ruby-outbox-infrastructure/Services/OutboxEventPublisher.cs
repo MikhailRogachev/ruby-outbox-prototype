@@ -19,7 +19,7 @@ public class OutboxEventPublisher(
         if (message == null)
             return;
 
-        logger.LogInformation("Found event {eid}", message.Id);
+        logger.LogDebug("Found event {eid}", message.Id);
 
         var service = serviceFactory.GetServiceInstance(message.ContentType);
         if (service.Instance == null)
@@ -28,12 +28,21 @@ public class OutboxEventPublisher(
             return;
         }
 
-        logger.LogInformation("The eventHandler {eh} has been identified for the message id - {mid}", service.Instance.GetType(), message.Id);
+        logger.LogDebug("The eventHandler {eh} has been identified for the message id - {mid}", service.Instance.GetType(), message.Id);
 
         var @event = JsonSerializer.Deserialize(message.Content!, service.InstanceType!);
 
-        var method = service.Instance.GetType().GetMethod("HandleAsync", new Type[] { service.InstanceType! });
 
-        method!.Invoke(service, new object[] { @event! });
+        try
+        {
+            var method = service.Instance.GetType().GetMethod("HandleAsync", new Type[] { service.InstanceType! });
+
+            method!.Invoke(service.Instance, new object[] { @event! });
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message, ex);
+        }
     }
 }

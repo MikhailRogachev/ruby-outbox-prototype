@@ -13,7 +13,7 @@ public class RunPsCommandHandler : BaseEventHandler, IEventHandler<RunPowerShell
 
     public async Task HandleAsync(RunPowerShellCommand @event)
     {
-        Logger.LogInformation("Run powershell command process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Run powershell command process for Event: {event}, VM: {vm} is started", DateTime.Now, @event.EventId, @event.VmId);
 
         var vm = await VirtualMachineRepository.TryGetVmByIdAsync(@event.VmId);
         if (vm == null)
@@ -27,6 +27,6 @@ public class RunPsCommandHandler : BaseEventHandler, IEventHandler<RunPowerShell
 
         await VirtualMachineRepository.UnitOfWork.SaveAsync();
 
-        Logger.LogInformation("Run powershell command process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Run powershell command process for Event: {event}, VM: {vm} is completed", DateTime.Now, @event.EventId, @event.VmId);
     }
 }

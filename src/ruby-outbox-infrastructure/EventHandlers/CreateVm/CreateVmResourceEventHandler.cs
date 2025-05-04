@@ -12,7 +12,7 @@ public class CreateVmResourceEventHandler : BaseEventHandler, IEventHandler<Crea
 
     public async Task HandleAsync(CreateVmResource @event)
     {
-        Logger.LogInformation("Creation NIC process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Creation NIC process for Event: {event}, VM: {vm} is started", DateTime.Now, @event.EventId, @event.VmId);
 
         var vm = await VirtualMachineRepository.TryGetVmByIdAsync(@event.VmId);
         if (vm == null)
@@ -26,6 +26,6 @@ public class CreateVmResourceEventHandler : BaseEventHandler, IEventHandler<Crea
 
         await VirtualMachineRepository.UnitOfWork.SaveAsync();
 
-        Logger.LogInformation("Creation NIC process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Creation NIC process for Event: {event}, VM: {vm} is completed", DateTime.Now, @event.EventId, @event.VmId);
     }
 }

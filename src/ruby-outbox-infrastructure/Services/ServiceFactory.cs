@@ -3,33 +3,36 @@ using ruby_outbox_core.Contracts.Interfaces;
 
 namespace ruby_outbox_infrastructure.Services;
 
+/// <summary>
+/// This class includes functions for services that create new instances of 
+/// eventhandles based on specified parameters.
+/// </summary>
 public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
 {
-    private Dictionary<string, Type> _types = new Dictionary<string, Type>();
+    private Dictionary<string, Type> _events = new Dictionary<string, Type>();
     private Dictionary<Type, Type> _handlers = new Dictionary<Type, Type>();
 
-    private Type TryGetType(string typeName)
+    private Type? TryGetEventType(string eventName)
     {
-        if (!_types.TryGetValue(typeName, out var type))
+        if (!_events.TryGetValue(eventName, out var type))
         {
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
+            var assembly = AppDomain.CurrentDomain
+                .GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == typeof(IEvent).Assembly.GetName().Name);
 
             if (assembly != null)
-            {
-                type = assembly.GetTypes().FirstOrDefault(p => p.Name == typeName);
-            }
+                type = assembly.GetTypes().FirstOrDefault(p => p.Name == eventName);
 
             if (type == null)
-                throw new InvalidOperationException($"Not able to recognize the type {typeName}.");
+                return null;
 
-            _types.Add(typeName, type);
+            _events.Add(eventName, type);
         }
 
         return type;
     }
 
-    private Type? TryResolve(Type eventType)
+    private Type? TryResolveEventHandler(Type eventType)
     {
         if (!_handlers.TryGetValue(eventType, out var handler))
         {
@@ -38,7 +41,6 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
 
             var types = AppDomain.CurrentDomain
                .GetAssemblies()
-               .Where(p => p.FullName!.Contains("ruby-outbox-"))
                .SelectMany(p => p.GetTypes().Where(type => handlerType.IsAssignableFrom(type) && !type.IsInterface));
 
             if (types == null || !types.Any())
@@ -53,11 +55,12 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
 
     /// <inheritdoc cref="IServiceFactory.GetServiceInstance(string)"/>
     /// <remarks>
-    /// If the event handler is not resolved by event name, the function returns a null instance.
+    /// If the event handler is not resolved by event name, the function returns
+    ///  <see cref="Tuple{object?, Type?}">Tuple{ Instance = null, InstanceType = null}</see>.
     /// </remarks>
     public (object? Instance, Type? InstanceType) GetServiceInstance(string eventName)
     {
-        var eventType = TryGetType(eventName);
+        var eventType = TryGetEventType(eventName);
 
         if (eventType == null)
             return (null, null);
@@ -67,11 +70,15 @@ public class ServiceFactory(IServiceProvider serviceProvider) : IServiceFactory
 
     /// <inheritdoc cref="IServiceFactory.GetServiceInstance(Type)"/>
     /// <remarks>
-    /// If the event handler is not resolved by event type, the function returns a null instance.
+    /// If the event handler is not resolved by event type, the function returns 
+    /// <see cref="Tuple{object?, Type?}">Tuple{ Instance = null, InstanceType = null}</see>.
     /// </remarks>
     public (object? Instance, Type? InstanceType) GetServiceInstance(Type eventType)
     {
-        var serviceType = TryResolve(eventType);
+        var serviceType = TryResolveEventHandler(eventType);
+        if (serviceType == null)
+            return (null, null);
+
         var instance = ActivatorUtilities.CreateInstance(serviceProvider, serviceType!, new object[] { serviceProvider });
 
         return (instance, eventType);

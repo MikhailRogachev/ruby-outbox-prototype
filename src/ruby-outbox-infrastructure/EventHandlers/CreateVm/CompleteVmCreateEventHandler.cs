@@ -12,7 +12,7 @@ public class CompleteVmCreateEventHandler : BaseEventHandler, IEventHandler<Comp
 
     public async Task HandleAsync(CompleteCreateVmProcess @event)
     {
-        Logger.LogInformation("Complete VM creation process for Event: {event}, VM: {vm} is started", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Complete VM creation process for Event: {event}, VM: {vm} is started", DateTime.Now, @event.EventId, @event.VmId);
 
         var vm = await VirtualMachineRepository.TryGetVmByIdAsync(@event.VmId);
         if (vm == null)
@@ -23,7 +23,7 @@ public class CompleteVmCreateEventHandler : BaseEventHandler, IEventHandler<Comp
 
         await VirtualMachineRepository.UnitOfWork.SaveAsync();
 
-        Logger.LogInformation("Complete VM creation process for Event: {event}, VM: {vm} is completed", @event.EventId, @event.VmId);
+        Logger.LogInformation("{datetime} - Complete VM creation process for Event: {event}, VM: {vm} is completed", DateTime.Now, @event.EventId, @event.VmId);
     }
 
     public void Dispose()

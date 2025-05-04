@@ -1,17 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PVAD.Vms.Infrastructure.Messaging.OutboxEvent;
 using ruby_outbox_core.Contracts.Interfaces;
-using ruby_outbox_core.Contracts.Interfaces.EventHub;
 using ruby_outbox_core.Contracts.Interfaces.Repositories;
 using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_core.Contracts.Options;
 using ruby_outbox_data.Extensions;
 using ruby_outbox_data.Persistency;
 using ruby_outbox_data.Repositories;
+using ruby_outbox_infrastructure.BackgroundServices;
 using ruby_outbox_infrastructure.Profiles;
 using ruby_outbox_infrastructure.Services;
 using ruby_outbox_infrastructure.Services.Azure;
-using ruby_outbox_queue.EventProducer;
 
 namespace ruby_outbox_api;
 
@@ -52,9 +50,6 @@ public class Startup
         services.AddScoped<IOutboxEventPublisher, OutboxEventPublisher>();
         services.AddScoped<ISecretManager, SecretManager>();
         services.AddScoped<IAzureVirtualMachineService, AzureVirtualMachineService>();
-
-        // event hub
-        services.AddScoped<IProducer, DefaultEventProducer>();
 
         services.AddScoped<IOptionsProvider, OptionsProvider>();
         services.AddScoped<IServiceFactory, ServiceFactory>();

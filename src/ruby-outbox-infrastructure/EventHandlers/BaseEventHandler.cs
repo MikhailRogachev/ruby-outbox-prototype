@@ -50,11 +50,11 @@ public class BaseEventHandler
     {
         int mSec = randomGen.Next(1000, 10000);
 
-        _logger.LogInformation("Start {name} process for {msec} mS", name, mSec);
+        _logger.LogDebug("Start {name} process for {msec} mS", name, mSec);
 
         Thread.Sleep(mSec);
 
-        _logger.LogInformation("The process {name} is completed", name);
+        _logger.LogDebug("The process {name} is completed", name);
         return true;
     }
 

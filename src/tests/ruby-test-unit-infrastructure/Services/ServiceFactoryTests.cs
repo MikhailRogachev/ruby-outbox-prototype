@@ -2,6 +2,7 @@
 using ruby_outbox_core.Events.CreateVm;
 using ruby_outbox_infrastructure.EventHandlers.CreateVm;
 using ruby_outbox_infrastructure.Services;
+using ruby_test_core.Attributes;
 using ruby_test_core.Helpers;
 
 namespace ruby_test_unit.Services;
@@ -19,6 +20,18 @@ public class ServiceFactoryTests
         response.InstanceType.Should().Be(eventType);
     }
 
+    [Fact]
+    public void GetHandlerByTypeNotDefined()
+    {
+        var serviceProvider = ServiceProviderFactoryHelper.Init("appsettings.json");
+        var serviceFactory = new ServiceFactory(serviceProvider.ServiceProvider);
+        var response = serviceFactory.GetServiceInstance(typeof(int));
+
+        Assert.Null(response.Instance);
+        Assert.Null(response.InstanceType);
+    }
+
+
     [Theory, MemberData(nameof(GetNameToResolve))]
     public void GetHandlerTypeByEventName(string eventName, Type eventHandler)
     {
@@ -27,6 +40,17 @@ public class ServiceFactoryTests
         var response = serviceFactory.GetServiceInstance(eventName);
 
         response.Instance.Should().BeAssignableTo(eventHandler);
+    }
+
+    [Theory, AutoMock]
+    public void GetHandlerByNameNotDefined(string eventName)
+    {
+        var serviceProvider = ServiceProviderFactoryHelper.Init("appsettings.json");
+        var serviceFactory = new ServiceFactory(serviceProvider.ServiceProvider);
+        var response = serviceFactory.GetServiceInstance(eventName);
+
+        Assert.Null(response.Instance);
+        Assert.Null(response.InstanceType);
     }
 
     public static TheoryData<Type, Type> GetTypesToResolve()

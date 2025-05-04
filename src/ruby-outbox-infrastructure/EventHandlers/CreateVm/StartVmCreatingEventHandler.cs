@@ -16,7 +16,7 @@ public class StartVmCreatingEventHandler : BaseEventHandler, IEventHandler<Start
 
     public async Task HandleAsync(StartVmCreation @event)
     {
-        Logger.LogInformation("Initialization Creation VM for Event: {event}, Customer: {cid}, VM: {vm} is started", @event.EventId, @event.CustomerId, @event.VmId);
+        Logger.LogInformation("{datetime} - Initialization Creation VM for Event: {event}, Customer: {cid}, VM: {vm} is started", DateTime.Now, @event.EventId, @event.CustomerId, @event.VmId);
 
         try
         {
@@ -31,7 +31,7 @@ public class StartVmCreatingEventHandler : BaseEventHandler, IEventHandler<Start
             vm!.CreateNic();
             await CompleteEventAsync(@event.EventId);
 
-            Logger.LogInformation("Initialization Creation VM process for Event: {event}, VM: {vm} is completed.", @event.EventId, @event.VmId);
+            Logger.LogInformation("{datetime} - Initialization Creation VM process for Event: {event}, VM: {vm} is completed.", DateTime.Now, @event.EventId, @event.VmId);
         }
         catch (Exception ex)
         {

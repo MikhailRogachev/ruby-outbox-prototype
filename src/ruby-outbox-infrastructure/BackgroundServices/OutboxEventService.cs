@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using ruby_outbox_core.Contracts.Interfaces.Services;
 using ruby_outbox_core.Contracts.Options;
 
-namespace PVAD.Vms.Infrastructure.Messaging.OutboxEvent;
+namespace ruby_outbox_infrastructure.BackgroundServices;
 
 public class OutboxEventService(
     ILogger<OutboxEventService> logger,
@@ -18,9 +18,9 @@ public class OutboxEventService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("{time} The Outbox Service is starting.", DateTime.UtcNow);
+        logger.LogDebug("{time} The Outbox Service is starting.", DateTime.UtcNow);
 
-        stoppingToken.Register(() => logger.LogInformation("{time} Cancelling the Outbox Service due to host shutdown", DateTime.UtcNow));
+        stoppingToken.Register(() => logger.LogDebug("{time} Cancelling the Outbox Service due to host shutdown", DateTime.UtcNow));
 
         using (IServiceScope scope = serviceProvider.CreateScope())
         {
