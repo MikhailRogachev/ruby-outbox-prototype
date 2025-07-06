@@ -1,3 +1,5 @@
+using ruby_outbox_data.Extensions;
+
 namespace ruby_outbox_api;
 
 public partial class Program
@@ -13,6 +15,8 @@ public partial class Program
         startup.ConfigureServices(builder.Services);
 
         var app = builder.Build();
+
+        await DatabaseExtensions.MigrateDatabase(app.Services);
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
