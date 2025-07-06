@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-data", "src\rub
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-infrastructure", "src\ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj", "{0617EC2A-F99C-45F0-B080-5015D27C661C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-queue", "src\ruby-outbox-queue\ruby-outbox-queue.csproj", "{CE381E19-2666-4CAD-B81A-9278A2F32A43}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruby-outbox-api", "src\ruby-outbox-api\ruby-outbox-api.csproj", "{99E61CF6-3FAF-4B74-92AA-B00C0BE07A57}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DB02A8CB-334F-4335-B065-6A61C5607888}"
@@ -41,10 +39,6 @@ Global
 		{0617EC2A-F99C-45F0-B080-5015D27C661C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0617EC2A-F99C-45F0-B080-5015D27C661C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0617EC2A-F99C-45F0-B080-5015D27C661C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE381E19-2666-4CAD-B81A-9278A2F32A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE381E19-2666-4CAD-B81A-9278A2F32A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE381E19-2666-4CAD-B81A-9278A2F32A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE381E19-2666-4CAD-B81A-9278A2F32A43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99E61CF6-3FAF-4B74-92AA-B00C0BE07A57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99E61CF6-3FAF-4B74-92AA-B00C0BE07A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99E61CF6-3FAF-4B74-92AA-B00C0BE07A57}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ruby-outbox-infrastructure\ruby-outbox-infrastructure.csproj" />
-    <ProjectReference Include="..\ruby-outbox-queue\ruby-outbox-queue.csproj" />
   </ItemGroup>
 
 </Project>
