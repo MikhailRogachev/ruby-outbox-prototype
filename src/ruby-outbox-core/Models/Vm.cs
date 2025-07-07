@@ -3,6 +3,17 @@ using ruby_outbox_core.Events.CreateVm;
 
 namespace ruby_outbox_core.Models;
 
+/// <summary>
+///     Represents a virtual machine (VM) entity associated with a customer. Provides methods 
+///     to manage the VM creation process and its lifecycle.
+/// </summary>
+/// <remarks>
+///     The <see cref="Vm"/> class encapsulates the state and operations related to the creation 
+///     and management of a virtual machine. It includes properties for identifying the customer, 
+///     tracking the VM's status, and managing related resources. 
+///     The class also provides methods to transition the VM through various stages of its
+///     creation process.
+/// </remarks>
 public class Vm : Base
 {
     public Guid? CustomerId { get; set; }

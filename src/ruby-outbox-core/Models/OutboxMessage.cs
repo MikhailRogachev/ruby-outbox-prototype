@@ -3,6 +3,15 @@ using System.Text.Json;
 
 namespace ruby_outbox_core.Models;
 
+/// <summary>
+///     Represents a message stored in an outbox for deferred processing or delivery.
+/// </summary>
+/// <remarks>
+///     The <see cref="OutboxMessage"/> class is typically used in scenarios where messages 
+///     need to be persisted temporarily before being processed or sent to their destination. 
+///     It includes metadata  such as the message content, status, and timestamps for tracking 
+///     and management purposes.
+/// </remarks>
 public class OutboxMessage
 {
     public Guid Id { get; set; }
