@@ -2,6 +2,14 @@
 
 namespace ruby_outbox_core.Events.CreateVm;
 
+/// <summary>
+///     Represents an event indicating the completion of a virtual machine creation process.
+/// </summary>
+/// <remarks>
+///     This event contains information about the virtual machine creation process, including 
+///     the event's unique identifier, the timestamp when the event was created, and the 
+///     identifier of the virtual machine associated with the event.
+/// </remarks>
 public class CompleteCreateVmProcess : IEvent
 {
     public Guid EventId { get; set; }
