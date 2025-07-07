@@ -1,4 +1,6 @@
-# Outbox Pattern Implementation (C# .NET & PostgreSQL for Azure VM Creation Simulation)
+# Outbox Pattern Implementation 
+
+C# .NET & PostgreSQL for Azure VM Creation Simulation
 
 This solution employs the Outbox Pattern to reliably manage transactions and message publishing in a distributed system, specifically designed for simulating VM creation events on Azure Clouds. Leveraging C# .NET for its implementation and PostgreSQL as the underlying database, it addresses the common challenge of ensuring atomicity when both updating a database and sending messages to a message broker.
 
