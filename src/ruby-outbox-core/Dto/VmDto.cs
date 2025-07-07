@@ -2,6 +2,15 @@
 
 namespace ruby_outbox_core.Dto;
 
+/// <summary>
+///     Represents a virtual machine (VM) data transfer object (DTO) containing 
+///     key information about the VM.
+/// </summary>
+/// <remarks>
+///     This class is typically used to transfer VM-related data between different 
+///     layers of an application.
+///     It includes identifiers, metadata, and the current status of the VM.
+/// </remarks>
 public class VmDto
 {
     public Guid Id { get; set; }
